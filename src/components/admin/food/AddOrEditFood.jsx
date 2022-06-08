@@ -32,7 +32,7 @@ const AddOrEditFood = ({ page = "add" }) => {
       <div className="title">{page === "edit" ? "Sửa" : "Thêm"} món</div>
 
       <Form
-        style={{ maxWidth: 500, marginInline: "auto" }}
+        style={{ maxWidth: 450, marginInline: "auto" }}
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"
@@ -51,7 +51,7 @@ const AddOrEditFood = ({ page = "add" }) => {
                   message: "Vui lòng nhập tên món ăn",
                 },
               ]}>
-              <Input />
+              <Input autoFocus />
             </Form.Item>
           </Col>
 

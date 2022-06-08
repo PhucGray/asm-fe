@@ -13,7 +13,7 @@ const AddOrEditUser = ({ page = "add" }) => {
       <div className="title">{page === "edit" ? "Sửa" : "Thêm"} người dùng</div>
 
       <Form
-        style={{ maxWidth: 500, marginInline: "auto" }}
+        style={{ maxWidth: 450, marginInline: "auto" }}
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"
@@ -33,7 +33,7 @@ const AddOrEditUser = ({ page = "add" }) => {
                   message: "Vui lòng nhập họ và tên",
                 },
               ]}>
-              <Input />
+              <Input autoFocus />
             </Form.Item>
           </Col>
 
@@ -117,7 +117,7 @@ const AddOrEditUser = ({ page = "add" }) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item name="role" label="Ẩn">
+        <Form.Item name="role" label="Quyền">
           <Radio.Group>
             <Radio value={0}>Nhân viên</Radio>
             <Radio value={1}>Admin</Radio>

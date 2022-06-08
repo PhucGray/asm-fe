@@ -13,7 +13,7 @@ const AddUser = () => {
       <div className="title">Thêm người dùng</div>
 
       <Form
-        style={{ maxWidth: 500, marginInline: "auto" }}
+        style={{ maxWidth: 450, marginInline: "auto" }}
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"

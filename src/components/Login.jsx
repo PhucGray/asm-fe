@@ -1,6 +1,5 @@
-import { Button, Col, Form, Input, InputNumber, Row, Select } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-
+import { Button, Checkbox, Form, Input } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -24,15 +23,13 @@ const Login = () => {
 
       <Form
         name="login"
-        initialValues={
-          {
-            // remember: true,
-          }
-        }
         onFinish={onFinish}
+        initialValues={{
+          isUser: false,
+        }}
         autoComplete="off"
         layout="vertical"
-        style={{ maxWidth: 500, marginInline: "auto" }}>
+        style={{ maxWidth: 450, marginInline: "auto" }}>
         <Form.Item
           label="Email"
           name="email"
@@ -46,7 +43,7 @@ const Login = () => {
               message: "Sai định dạng email",
             },
           ]}>
-          <Input />
+          <Input autoFocus />
         </Form.Item>
 
         <Form.Item
@@ -64,6 +61,10 @@ const Login = () => {
             },
           ]}>
           <Input.Password />
+        </Form.Item>
+
+        <Form.Item name="isUser" valuePropName="checked">
+          <Checkbox>Bạn là nhân viên ?</Checkbox>
         </Form.Item>
 
         <Form.Item>

@@ -5,7 +5,7 @@ const CustomerDetail = () => {
     <div>
       <div className="title">Thông tin khách hàng</div>
 
-      <div style={{ maxWidth: 500, marginInline: "auto" }}>
+      <div style={{ maxWidth: 450, marginInline: "auto" }}>
         <div>
           Tên: <span>Nguyễn Văn A</span>
         </div>

@@ -1,26 +1,26 @@
-import "antd/dist/antd.css";
-//
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Admin from "./pages/Admin";
-import Customer from "./pages/Customer";
-//
-import ManageFood from "./components/admin/food/ManageFood";
+import CustomerDetail from "./components/admin/customer/CustomerDetail";
+import ManageCustomer from "./components/admin/customer/ManageCustomer";
 import AddOrEditFood from "./components/admin/food/AddOrEditFood";
 import FoodDetail from "./components/admin/food/FoodDetail";
-import ManageUser from "./components/admin/user/ManageUser";
-import AddOrEditUser from "./components/admin/user/AddOrEditUser";
-import UserDetail from "./components/admin/user/UserDetail";
-import ManageCustomer from "./components/admin/customer/ManageCustomer";
-import CustomerDetail from "./components/admin/customer/CustomerDetail";
+//
+import ManageFood from "./components/admin/food/ManageFood";
 import ManageOrder from "./components/admin/order/ManageOrder";
 import OrderDetail from "./components/admin/order/OrderDetail";
-import FoodList from "./components/customer/FoodList";
+import AddOrEditUser from "./components/admin/user/AddOrEditUser";
+import ManageUser from "./components/admin/user/ManageUser";
+import UserDetail from "./components/admin/user/UserDetail";
+import Cart from "./components/customer/Cart";
+import CheckoutInfo from "./components/customer/CheckoutInfo";
 import FoodInfo from "./components/customer/FoodInfo";
-import OrderHistory from "./components/customer/OrderHistory";
+import FoodList from "./components/customer/FoodList";
 import OrderDetailHistory from "./components/customer/OrderDetailHistory";
-import Register from "./components/Register";
+import OrderHistory from "./components/customer/OrderHistory";
 import Login from "./components/Login";
+import Register from "./components/Register";
+import Admin from "./pages/Admin";
+import Customer from "./pages/Customer";
 
 const App = () => {
   return (
@@ -29,6 +29,8 @@ const App = () => {
         <Route index element={<FoodList />} />
         <Route path="history" element={<OrderHistory />} />
         <Route path="history/:id" element={<OrderDetailHistory />} />
+        <Route path="cart" element={<Cart />} />
+        <Route path="checkout-info" element={<CheckoutInfo />} />
         <Route path=":id" element={<FoodInfo />} />
       </Route>
 

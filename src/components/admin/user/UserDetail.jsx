@@ -5,7 +5,7 @@ const UserDetail = () => {
     <div>
       <div className="title">Thông tin người dùng</div>
 
-      <div style={{ maxWidth: 500, marginInline: "auto" }}>
+      <div style={{ maxWidth: 450, marginInline: "auto" }}>
         <div>
           Tên: <span>Nguyễn Văn A</span>
         </div>
@@ -27,7 +27,7 @@ const UserDetail = () => {
         </div>
 
         <div>
-          Địa chỉ <span>Quận 7</span>
+          Địa chỉ: <span>Quận 7</span>
         </div>
 
         <div>

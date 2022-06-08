@@ -5,7 +5,7 @@ const FoodDetail = () => {
     <div>
       <div className="title">Chi tiết món ăn</div>
 
-      <div style={{ maxWidth: 500, marginInline: "auto" }}>
+      <div style={{ maxWidth: 450, marginInline: "auto" }}>
         <div>
           Tên: <span>Cháo gà</span>
         </div>

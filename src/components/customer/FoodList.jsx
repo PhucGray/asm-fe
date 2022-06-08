@@ -1,8 +1,12 @@
 import { Button } from "antd";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { addFoodToCart } from "../../features/cart/cartSlice";
 
 const FoodList = () => {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   return (
@@ -20,7 +24,14 @@ const FoodList = () => {
           36,000 VND
         </div>
 
-        <Button className="w-100" style={{ height: 45 }} type="primary">
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            dispatch(addFoodToCart({ name: "chao long" }));
+          }}
+          className="w-100"
+          style={{ height: 45 }}
+          type="primary">
           Thêm vào giỏ hàng
         </Button>
       </div>

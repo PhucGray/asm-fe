@@ -30,7 +30,7 @@ const Register = () => {
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"
-        style={{ maxWidth: 500, marginInline: "auto" }}>
+        style={{ maxWidth: 450, marginInline: "auto" }}>
         <Form.Item
           label="Họ và tên"
           name="fullName"
@@ -40,7 +40,7 @@ const Register = () => {
               message: "Vui lòng nhập họ và tên",
             },
           ]}>
-          <Input />
+          <Input autoFocus />
         </Form.Item>
 
         <Row className="gap-3">

@@ -13,7 +13,7 @@ const EditUser = () => {
       <div className="title">Sửa người dùng</div>
 
       <Form
-        style={{ maxWidth: 500, marginInline: "auto" }}
+        style={{ maxWidth: 450, marginInline: "auto" }}
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"
