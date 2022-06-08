@@ -1,6 +1,7 @@
 import { Button, Space, Table, Tag } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ManageFood = () => {
   const navigate = useNavigate();
@@ -27,33 +28,35 @@ const ManageFood = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={() => navigate("awbfawfkawfk")}>Chi tiết</a>
-          <a onClick={() => navigate("edit")}>Sửa</a>
+          <a onClick={() => navigate(record.key)}>Chi tiết</a>
+          <a onClick={() => navigate(`edit/${record.key}`)}>Sửa</a>
           <a>Xoá</a>
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: "Gà rán",
-      price: 200000,
-      status: "Còn hàng",
-    },
-    {
-      key: "2",
-      name: "Hamburger",
-      price: 500000,
-      status: "Còn hàng",
-    },
-    {
-      key: "3",
-      name: "Cháo",
-      price: 140000,
-      status: "Còn hàng",
-    },
-  ];
+
+  const [foodData, setFoodData] = useState([]);
+  //
+  useEffect(() => {
+    const getFoodList = async () => {
+      const res = await axios.get("https://localhost:44328/api/foods");
+
+      const foodList = res.data?.map((i) => {
+        return {
+          key: i.id,
+          name: i.name,
+          price: i.price,
+          status: i.status ? "Còn hàng" : "Hết hàng",
+        };
+      });
+
+      setFoodData(foodList);
+    };
+
+    getFoodList();
+  }, []);
+
   return (
     <div>
       <div className="title">Quản lí món ăn</div>
@@ -62,7 +65,7 @@ const ManageFood = () => {
         Thêm món
       </Button>
 
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={foodData} />
     </div>
   );
 };

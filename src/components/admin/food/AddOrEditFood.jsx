@@ -6,27 +6,100 @@ import {
   InputNumber,
   Radio,
   Row,
+  message,
   Upload,
 } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import FormItem from "antd/lib/form/FormItem";
 
 const { TextArea } = Input;
 
 const AddOrEditFood = ({ page = "add" }) => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [file, setFile] = useState(null);
+  const [form] = Form.useForm();
+
+  const onFinish = async (data) => {
+    try {
+      const formData = new FormData();
+
+      // console.log(data);
+      formData.append("file", data.Image.file.originFileObj);
+      formData.append("foodData", JSON.stringify({ ...data, Image: null }));
+
+      const res = await axios({
+        method: "post",
+        url: "https://localhost:44328/api/foods",
+        data: formData,
+
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.data) {
+        console.log(res.data);
+        form.resetFields();
+        message.success("Thêm món thành công");
+      }
+    } catch (error) {
+      console.log("onFinishError: " + error);
+    }
   };
 
-  const normFile = (e) => {
-    console.log("Upload event:", e);
+  async function handleUploadChange(e) {
+    setFile(e.target.files[0]);
+  }
 
-    if (Array.isArray(e)) {
-      return e;
+  // EDIT
+  const [fileList, setFileList] = useState([]);
+  const params = useParams();
+
+  const onChange = ({ fileList: newFileList }) => {
+    if (fileList.length === 1) {
+      form.setFieldsValue({ Image: null });
+      setFileList([]);
+      return;
     }
 
-    return e?.fileList;
+    setFileList(newFileList);
   };
 
+  useEffect(() => {
+    const getFoodById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+
+      const {
+        id: foodId,
+        name,
+        price,
+        specialPrice,
+        image,
+        status,
+        isDeleted,
+        description,
+      } = res.data;
+
+      form.setFieldsValue({
+        Name: name,
+        Price: price,
+        SpecialPrice: specialPrice,
+        Status: status,
+        IsDeleted: isDeleted,
+        Description: description,
+        Image: image,
+      });
+
+      setFileList([{ url: `https://localhost:44328/Images/${image}` }]);
+    };
+
+    if (params.id) {
+      getFoodById(params?.id);
+      //  axios.get('')
+    }
+  }, []);
   return (
     <div>
       <div className="title">{page === "edit" ? "Sửa" : "Thêm"} món</div>
@@ -37,14 +110,15 @@ const AddOrEditFood = ({ page = "add" }) => {
         autoComplete="off"
         layout="vertical"
         initialValues={{
-          status: true,
-          isDeleted: false,
-        }}>
+          Status: true,
+          IsDeleted: false,
+        }}
+        form={form}>
         <Row gutter={24}>
           <Col flex="auto">
             <Form.Item
               label="Tên món"
-              name="name"
+              name="Name"
               rules={[
                 {
                   required: true,
@@ -56,15 +130,38 @@ const AddOrEditFood = ({ page = "add" }) => {
           </Col>
 
           <Col flex="102px">
-            <Form.Item
-              name="upload"
-              label="Upload"
+            <FormItem
+              name="Image"
+              label="Ảnh"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn ảnh",
+                },
+              ]}>
+              <Upload
+                fileList={fileList}
+                // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                onChange={onChange}
+                listType="picture"
+                maxCount={1}>
+                <Button>Upload</Button>
+              </Upload>
+            </FormItem>
+            {/* <input type="file" onChange={handleUploadChange} /> */}
+            {/* <Form.Item
+              name="image"
+              label="Ảnh"
               valuePropName="fileList"
               getValueFromEvent={normFile}>
-              <Upload name="logo" listType="picture">
-                <Button>Click to upload</Button>
+              <Upload
+                maxCount={1}
+                listType="picture"
+               
+                onChange={handleUploadChange}>
+                <Button>Thêm ảnh</Button>
               </Upload>
-            </Form.Item>
+            </Form.Item> */}
           </Col>
         </Row>
 
@@ -72,7 +169,7 @@ const AddOrEditFood = ({ page = "add" }) => {
           <Col span={12}>
             <Form.Item
               label="Giá"
-              name="price"
+              name="Price"
               rules={[
                 {
                   required: true,
@@ -84,19 +181,27 @@ const AddOrEditFood = ({ page = "add" }) => {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Giá đặc biệt" name="specialPrice">
+            <Form.Item label="Giá đặc biệt" name="SpecialPrice">
               <InputNumber className="w-100" />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item label="Mô tả" name="description">
+        <Form.Item
+          label="Mô tả"
+          name="Description"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập mô tả",
+            },
+          ]}>
           <TextArea rows={4} />
         </Form.Item>
 
         <Row gutter={24}>
           <Col span={12}>
-            <Form.Item name="status" label="Trạng thái">
+            <Form.Item name="Status" label="Trạng thái">
               <Radio.Group>
                 <Radio value={true}>Còn hàng</Radio>
                 <Radio value={false}>Hết hàng</Radio>
@@ -105,7 +210,7 @@ const AddOrEditFood = ({ page = "add" }) => {
           </Col>
 
           <Col span={12}>
-            <Form.Item name="isDeleted" label="Ẩn">
+            <Form.Item name="IsDeleted" label="Ẩn">
               <Radio.Group>
                 <Radio value={false}>Không</Radio>
                 <Radio value={true}>Có</Radio>

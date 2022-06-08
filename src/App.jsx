@@ -38,7 +38,7 @@ const App = () => {
         <Route path="food">
           <Route index element={<ManageFood />} />
           <Route path="add" element={<AddOrEditFood page="add" />} />
-          <Route path="edit" element={<AddOrEditFood page="edit" />} />
+          <Route path="edit/:id" element={<AddOrEditFood page="edit" />} />
 
           <Route path=":id" element={<FoodDetail />} />
         </Route>
@@ -46,7 +46,7 @@ const App = () => {
         <Route path="user">
           <Route index element={<ManageUser />} />
           <Route path="add" element={<AddOrEditUser page="add" />} />
-          <Route path="edit" element={<AddOrEditUser page="edit" />} />
+          <Route path="edit/:id" element={<AddOrEditUser page="edit" />} />
           <Route path=":id" element={<UserDetail />} />
         </Route>
 
