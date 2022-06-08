@@ -1,21 +1,10 @@
-import "../styles/admin.scss";
+import "../styles/bootstrap.scss";
 //
-import { Menu, Avatar } from "antd";
 import React from "react";
+import { Button, Menu, message, Popconfirm } from "antd";
+import { Outlet, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
-import ManageFood from "../components/food/ManageFood";
-import AddFood from "../components/food/AddFood";
-import EditFood from "../components/food/EditFood";
-import FoodDetail from "../components/food/FoodDetail";
-import ManageUser from "../components/user/ManageUser";
-import AddUser from "../components/user/AddUser";
-import EditUser from "../components/user/EditUser";
-import UserDetail from "../components/user/UserDetail";
-import ManageCustomer from "../components/customer/ManageCustomer";
-import CustomerDetail from "../components/customer/CustomerDetail";
-//
-import { Routes, Route, useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -40,14 +29,31 @@ const Admin = () => {
     },
   ];
 
+  const confirm = () => {
+    navigate("/");
+    message.success("Đăng xuất thành công");
+  };
+
+  const cancel = (e) => {};
+
   return (
     <div className="admin__page">
       <div className="navbar">
-        <img className="logo" src={LogoImg} />
+        <div onClick={() => navigate("/admin")} style={{ cursor: "pointer" }}>
+          <img className="logo" src={LogoImg} />
+        </div>
 
         <div className="d-flex align-items-center gap-2">
           <div>admin@gmail.com</div>
-          <Avatar src="https://joeschmoe.io/api/v1/random" />
+
+          <Popconfirm
+            title="Bạn có chắc chắn muốn đăng xuất ?"
+            onConfirm={confirm}
+            onCancel={cancel}
+            okText="Có"
+            cancelText="Huỷ">
+            <Button>Đăng xuất</Button>
+          </Popconfirm>
         </div>
       </div>
 
@@ -66,30 +72,7 @@ const Admin = () => {
         </div>
 
         <div className="admin-swap-component">
-          <Routes>
-            <Route path="/food">
-              <Route index element={<ManageFood />} />
-              <Route path="add" element={<AddFood />} />
-              <Route path="edit" element={<EditFood />} />
-              <Route path=":id" element={<FoodDetail />} />
-            </Route>
-
-            <Route path="/user">
-              <Route index element={<ManageUser />} />
-              <Route path="add" element={<AddUser />} />
-              <Route path="edit" element={<EditUser />} />
-              <Route path=":id" element={<UserDetail />} />
-            </Route>
-
-            <Route path="/customer">
-              <Route index element={<ManageCustomer />} />
-              <Route path=":id" element={<CustomerDetail />} />
-            </Route>
-          </Routes>
-          {/* <ManageCustomer /> */}
-          {/* <AddUser /> */}
-          {/* <EditUser /> */}
-          {/* <CustomerDetail /> */}
+          <Outlet />
         </div>
       </div>
     </div>

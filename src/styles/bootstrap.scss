@@ -1,3 +1,10 @@
+.title {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+}
+
 .admin__page {
   height: 100vh;
   width: 100vw;
@@ -46,13 +53,52 @@
       background: #fff;
 
       border-radius: 5px;
+    }
+  }
+}
 
-      .title {
-        margin-bottom: 20px;
-        text-align: center;
-        font-size: 25px;
-        font-weight: bold;
+.customer__page {
+  min-height: 100vh;
+  width: 100vw;
+
+  background: rgb(241, 241, 241);
+
+  display: flex;
+  flex-direction: column;
+
+  .navbar {
+    background: #fff;
+    padding: 15px 40px;
+  }
+
+  .food-list {
+    padding: 10px 40px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+
+    .food-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+
+      border-radius: 5px;
+      overflow: hidden;
+
+      cursor: pointer;
+
+      background: #fff;
+
+      img {
+        width: 100%;
       }
     }
   }
+}
+
+// custom
+.ant-upload-list-item-error {
+  border-color: rgb(25, 192, 75) !important;
 }

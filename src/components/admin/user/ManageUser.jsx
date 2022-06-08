@@ -10,7 +10,6 @@ const ManageUser = () => {
       title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
-      render: (text) => <a>{text}</a>,
     },
     {
       title: "Email",

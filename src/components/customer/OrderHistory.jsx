@@ -2,30 +2,29 @@ import { Button, Space, Table, Tag } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ManageCustomer = () => {
+const OrderHistory = () => {
   const navigate = useNavigate();
 
   const columns = [
     {
-      title: "Họ và tên",
-      dataIndex: "fullName",
-      key: "fullName",
-      render: (text) => <a>{text}</a>,
+      title: "Mã đơn hàng",
+      dataIndex: "orderId",
+      key: "orderId",
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Tổng tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
     },
     {
-      title: "Giới tính",
-      dataIndex: "gender",
-      key: "gender",
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
     },
     {
-      title: "Điện thoại",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Ngày ghi nhận",
+      dataIndex: "orderDate",
+      key: "orderDate",
     },
     {
       title: "Hành động",
@@ -40,19 +39,20 @@ const ManageCustomer = () => {
   const data = [
     {
       key: "1",
-      fullName: "Nguyễn Văn Tèo",
-      email: "teonv@gmail.com",
-      phone: "012345678",
-      gender: "Nam",
+      orderId: 1,
+      totalPrice: 100000,
+      orderDate: "12/02/2022",
+      status: "Hoàn thành",
     },
   ];
+
   return (
-    <div>
-      <div className="title">Quản lí người dùng</div>
+    <div className="py-3 px-5">
+      <div className="title mt-3">Lịch sử mua hàng</div>
 
       <Table columns={columns} dataSource={data} />
     </div>
   );
 };
 
-export default ManageCustomer;
+export default OrderHistory;

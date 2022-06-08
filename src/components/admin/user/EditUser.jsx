@@ -1,15 +1,5 @@
+import { Button, Col, Form, Input, Radio, Row, Select } from "antd";
 import React from "react";
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Row,
-  Select,
-} from "antd";
-import UploadImage from "../UploadImage";
 
 const { Option } = Select;
 
@@ -26,7 +16,12 @@ const EditUser = () => {
         style={{ maxWidth: 500, marginInline: "auto" }}
         onFinish={onFinish}
         autoComplete="off"
-        layout="vertical">
+        layout="vertical"
+        initialValues={{
+          status: true,
+          role: 0,
+          isDeleted: false,
+        }}>
         <Row gutter={24}>
           <Col flex="auto">
             <Form.Item
@@ -116,24 +111,24 @@ const EditUser = () => {
         </Row>
 
         <Form.Item name="status" label="Trạng thái">
-          <Radio.Group defaultValue="1">
-            <Radio value="1">Còn hoạt động</Radio>
-            <Radio value="0">Ngưng hoạt động</Radio>
+          <Radio.Group>
+            <Radio value={true}>Còn hoạt động</Radio>
+            <Radio value={false}>Ngưng hoạt động</Radio>
           </Radio.Group>
         </Form.Item>
 
         <Form.Item name="role" label="Ẩn">
-          <Radio.Group defaultValue="0">
-            <Radio value="0">Nhân viên</Radio>
-            <Radio value="1">Admin</Radio>
-            <Radio value="2">Super admin</Radio>
+          <Radio.Group>
+            <Radio value={0}>Nhân viên</Radio>
+            <Radio value={1}>Admin</Radio>
+            <Radio value={2}>Super admin</Radio>
           </Radio.Group>
         </Form.Item>
 
         <Form.Item name="isDeleted" label="Ẩn">
-          <Radio.Group defaultValue="0">
-            <Radio value="0">Không</Radio>
-            <Radio value="1">Có</Radio>
+          <Radio.Group>
+            <Radio value={false}>Không</Radio>
+            <Radio value={true}>Có</Radio>
           </Radio.Group>
         </Form.Item>
 
