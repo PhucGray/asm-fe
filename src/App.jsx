@@ -39,7 +39,6 @@ const App = () => {
           <Route index element={<ManageFood />} />
           <Route path="add" element={<AddOrEditFood page="add" />} />
           <Route path="edit/:id" element={<AddOrEditFood page="edit" />} />
-
           <Route path=":id" element={<FoodDetail />} />
         </Route>
 

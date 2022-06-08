@@ -1,12 +1,82 @@
-import { Button, Col, Form, Input, Radio, Row, Select } from "antd";
-import React from "react";
+import { Button, Col, Form, Input, message, Radio, Row, Select } from "antd";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
 const AddOrEditUser = ({ page = "add" }) => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [form] = Form.useForm();
+  const [userId, setUserId] = useState(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  const onFinish = async (data) => {
+    if (page === "add") {
+      const res = await axios({
+        method: "post",
+        url: "https://localhost:44328/api/users",
+        data: data,
+      });
+
+      if (res.data) {
+        message.success("Thêm người dùng thành công");
+        form.resetFields();
+      }
+    }
+
+    if (page === "edit") {
+      const res = await axios({
+        method: "put",
+        url: `https://localhost:44328/api/users/${userId}`,
+        data: data,
+      });
+
+      if (res.data) {
+        message.success("Sửa người dùng thành công");
+      }
+    }
   };
+
+  // EDIT
+
+  const params = useParams();
+
+  useEffect(() => {
+    const getUserById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
+
+      const {
+        id: userId,
+        fullName,
+        gender,
+        email,
+        address,
+        phone,
+        role,
+        isDeleted,
+        password,
+      } = res.data;
+
+      setUserId(userId);
+
+      form.setFieldsValue({
+        fullName,
+        gender,
+        email,
+        address,
+        phone,
+        role,
+        isDeleted,
+        password,
+      });
+
+      setIsSuperAdmin(role === 2);
+    };
+
+    if (params.id) {
+      getUserById(params?.id);
+    }
+  }, []);
 
   return (
     <div>
@@ -21,7 +91,8 @@ const AddOrEditUser = ({ page = "add" }) => {
           status: true,
           role: 0,
           isDeleted: false,
-        }}>
+        }}
+        form={form}>
         <Row gutter={24}>
           <Col flex="auto">
             <Form.Item
@@ -40,11 +111,11 @@ const AddOrEditUser = ({ page = "add" }) => {
           <Col flex="none">
             <Form.Item
               name="gender"
-              label="Gender"
+              label="Giới tính"
               rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}>
               <Select placeholder="Chọn giới tính">
-                <Option value="male">male</Option>
-                <Option value="female">female</Option>
+                <Option value={true}>Nam</Option>
+                <Option value={false}>Nữ</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -65,19 +136,21 @@ const AddOrEditUser = ({ page = "add" }) => {
             </Form.Item>
           </Col>
 
-          <Col flex="none">
-            <Form.Item
-              label="Mật khẩu"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập mật khẩu!",
-                },
-              ]}>
-              <Input.Password />
-            </Form.Item>
-          </Col>
+          {(!page === "edit" || !isSuperAdmin) && (
+            <Col flex="none">
+              <Form.Item
+                label="Mật khẩu"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mật khẩu!",
+                  },
+                ]}>
+                <Input.Password />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
 
         <Row gutter={24}>

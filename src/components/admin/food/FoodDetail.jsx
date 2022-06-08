@@ -47,7 +47,6 @@ const FoodDetail = () => {
             <img
               width={100}
               height={100}
-              // src="https://joeschmoe.io/api/v1/random"
               src={`https://localhost:44328/images/${food.image}`}
             />
           </div>

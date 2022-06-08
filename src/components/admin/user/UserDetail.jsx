@@ -1,47 +1,93 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const UserDetail = () => {
+  const params = useParams();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getuserById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
+
+      console.log(res);
+      setUser(res.data);
+    };
+
+    if (params.id) {
+      getuserById(params?.id);
+    }
+  }, []);
+
   return (
     <div>
       <div className="title">Thông tin người dùng</div>
 
-      <div style={{ maxWidth: 450, marginInline: "auto" }}>
-        <div>
-          Tên: <span>Nguyễn Văn A</span>
-        </div>
+      {user && (
+        <div
+          style={{
+            width: "fit-content",
+            marginInline: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Tên:
+            </div>
+            <div>{user.fullName}</div>
+          </div>
 
-        <div>
-          Quyền: <span>Nhân viên</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Email:
+            </div>
+            <div>{user.email}</div>
+          </div>
 
-        <div>
-          Giới tính: <span>Nam</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Address:
+            </div>
+            <div>{user.address}</div>
+          </div>
 
-        <div>
-          Email: <span>namnv@gmail.com</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Phone:
+            </div>
+            <div>{user.phone}</div>
+          </div>
 
-        <div>
-          Điện thoại: <span>01234567899</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Giới tính:
+            </div>
+            <div>{user.gender ? "Nam" : "Nữ"}</div>
+          </div>
 
-        <div>
-          Địa chỉ: <span>Quận 7</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Quyền:
+            </div>
+            <div>
+              {user.role === 0
+                ? "Nhân viên"
+                : user.role === 1
+                ? "Admin"
+                : "Super admin"}
+            </div>
+          </div>
 
-        <div>
-          Trạng thái: <span>Còn hoạt động</span>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Ẩn:
+            </div>
+            <div>{user.isDeleted ? "Có" : "Không"}</div>
+          </div>
         </div>
-
-        <div>
-          Ngày thêm: <span>20/12/2000</span>
-        </div>
-
-        <div>
-          Ẩn: <span>Không</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
