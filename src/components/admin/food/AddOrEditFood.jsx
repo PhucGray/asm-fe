@@ -18,53 +18,81 @@ import FormItem from "antd/lib/form/FormItem";
 const { TextArea } = Input;
 
 const AddOrEditFood = ({ page = "add" }) => {
-  const [file, setFile] = useState(null);
   const [form] = Form.useForm();
+  const [foodId, setfoodId] = useState(null);
 
   const onFinish = async (data) => {
     try {
       const formData = new FormData();
 
-      // console.log(data);
-      formData.append("file", data.Image.file.originFileObj);
-      formData.append("foodData", JSON.stringify({ ...data, Image: null }));
+      let file;
+      let foodData = data;
 
-      const res = await axios({
-        method: "post",
-        url: "https://localhost:44328/api/foods",
-        data: formData,
+      if (typeof data.Image === "object") {
+        file = data.Image.file.originFileObj;
+        foodData = { ...data, Image: null };
+      } else {
+        file = null;
+      }
 
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      formData.append("file", file);
+      formData.append("foodData", JSON.stringify(foodData));
 
-      if (res.data) {
-        console.log(res.data);
-        form.resetFields();
-        message.success("Thêm món thành công");
+      if (page === "add") {
+        const res = await axios({
+          method: "post",
+          url: "https://localhost:44328/api/foods",
+          data: formData,
+
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (res.data) {
+          form.resetFields();
+          setFileList([]);
+          message.success("Thêm món thành công");
+        }
+      }
+
+      if (page === "edit") {
+        const res = await axios({
+          method: "put",
+          url: `https://localhost:44328/api/foods/${foodId}`,
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (res.data) {
+          message.success("Sửa món thành công");
+        }
       }
     } catch (error) {
       console.log("onFinishError: " + error);
     }
   };
 
-  async function handleUploadChange(e) {
-    setFile(e.target.files[0]);
-  }
-
   // EDIT
   const [fileList, setFileList] = useState([]);
   const params = useParams();
 
-  const onChange = ({ fileList: newFileList }) => {
-    if (fileList.length === 1) {
+  const onUploadChange = ({ fileList: newFileList }) => {
+    if (newFileList.length === 0) {
       form.setFieldsValue({ Image: null });
       setFileList([]);
-      return;
     }
+    if (newFileList.length === 1) {
+      setFileList(
+        newFileList.map((i) => {
+          i.name = null;
 
-    setFileList(newFileList);
+          return i;
+        }),
+      );
+    }
   };
 
   useEffect(() => {
@@ -82,6 +110,8 @@ const AddOrEditFood = ({ page = "add" }) => {
         description,
       } = res.data;
 
+      setfoodId(foodId);
+
       form.setFieldsValue({
         Name: name,
         Price: price,
@@ -97,7 +127,6 @@ const AddOrEditFood = ({ page = "add" }) => {
 
     if (params.id) {
       getFoodById(params?.id);
-      //  axios.get('')
     }
   }, []);
   return (
@@ -129,7 +158,7 @@ const AddOrEditFood = ({ page = "add" }) => {
             </Form.Item>
           </Col>
 
-          <Col flex="102px">
+          <Col flex="200px">
             <FormItem
               name="Image"
               label="Ảnh"
@@ -141,27 +170,14 @@ const AddOrEditFood = ({ page = "add" }) => {
               ]}>
               <Upload
                 fileList={fileList}
-                // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                onChange={onChange}
+                onChange={onUploadChange}
                 listType="picture"
+                multiple={false}
                 maxCount={1}>
                 <Button>Upload</Button>
               </Upload>
             </FormItem>
-            {/* <input type="file" onChange={handleUploadChange} /> */}
-            {/* <Form.Item
-              name="image"
-              label="Ảnh"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}>
-              <Upload
-                maxCount={1}
-                listType="picture"
-               
-                onChange={handleUploadChange}>
-                <Button>Thêm ảnh</Button>
-              </Upload>
-            </Form.Item> */}
+            {/* <input type="file" onUploadChange={handleUploadChange} /> */}
           </Col>
         </Row>
 

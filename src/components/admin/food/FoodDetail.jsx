@@ -1,55 +1,95 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const FoodDetail = () => {
+  const params = useParams();
+  const [food, setFood] = useState(null);
+
+  useEffect(() => {
+    const getFoodById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+
+      console.log(res);
+      setFood(res.data);
+    };
+
+    if (params.id) {
+      getFoodById(params?.id);
+    }
+  }, []);
+
   return (
     <div>
       <div className="title">Chi tiết món ăn</div>
 
-      <div style={{ maxWidth: 450, marginInline: "auto" }}>
-        <div>
-          Tên: <span>Cháo gà</span>
-        </div>
+      {food && (
+        <div
+          style={{
+            width: "fit-content",
+            marginInline: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Tên:
+            </div>
+            <div>{food.name}</div>
+          </div>
 
-        <div className="d-flex">
-          Ảnh:
-          <img
-            width={100}
-            height={100}
-            src="https://joeschmoe.io/api/v1/random"
-          />
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Ảnh:
+            </div>
 
-        <div>
-          Giá: <span>250000</span>
-        </div>
+            <img
+              width={100}
+              height={100}
+              // src="https://joeschmoe.io/api/v1/random"
+              src={`https://localhost:44328/images/${food.image}`}
+            />
+          </div>
 
-        <div>
-          Giá đặc biệt: <span></span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Giá:
+            </div>
+            <div>{food.price}</div>
+          </div>
 
-        <div>
-          Mô tả:
-          <span>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod
-            delectus iste excepturi necessitatibus aperiam quisquam reiciendis
-            reprehenderit incidunt deserunt alias, dolor accusamus officiis
-            error nihil facere recusandae iure placeat expedita, corrupti illo
-            assumenda omnis et! Fuga consequatur nihil quisquam repellat.
-          </span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Giá đặc biệt:
+            </div>
+            <div>
+              {food.specialPrice === 0 ? "Không có" : food.specialPrice}
+            </div>
+          </div>
 
-        <div>
-          Trạng thái: <span>Còn hàng</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Mô tả:
+            </div>
+            <div>{food.description}</div>
+          </div>
 
-        <div>
-          Ngày thêm: <span>20/12/2000</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Trạng thái:
+            </div>
+            <div>{food.status ? "Còn hàng" : "Hết hàng"}</div>
+          </div>
 
-        <div>
-          Ẩn: <span>Không</span>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Ẩn:
+            </div>
+            <div>{food.isDeleted ? "Có" : "Không"}</div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
