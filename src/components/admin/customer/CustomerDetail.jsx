@@ -1,43 +1,96 @@
-import React from "react";
+import { Button } from "antd";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const CustomerDetail = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+  const [customer, setCustomer] = useState(null);
+
+  useEffect(() => {
+    const getCustomerById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
+
+      setCustomer(res.data);
+    };
+
+    if (params.id) {
+      getCustomerById(params?.id);
+    }
+  }, []);
+
   return (
     <div>
-      <div className="title">Thông tin khách hàng</div>
+      <Button
+        className="mt-3 ms-5 d-flex align-items-center"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate("/admin/customer")}>
+        Quay lại
+      </Button>
 
-      <div style={{ maxWidth: 450, marginInline: "auto" }}>
-        <div>
-          Tên: <span>Nguyễn Văn A</span>
-        </div>
+      <div className="title">Thông tin người dùng</div>
 
-        <div>
-          Giới tính: <span>Nam</span>
-        </div>
+      {customer && (
+        <div
+          style={{
+            width: "fit-content",
+            marginInline: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Id:
+            </div>
+            <div>{customer.id}</div>
+          </div>
 
-        <div>
-          Email: <span>namnv@gmail.com</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Tên:
+            </div>
+            <div>{customer.fullName}</div>
+          </div>
 
-        <div>
-          Điện thoại: <span>01234567899</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Email:
+            </div>
+            <div>{customer.email}</div>
+          </div>
 
-        <div>
-          Địa chỉ <span>Quận 7</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Address:
+            </div>
+            <div>{customer.address}</div>
+          </div>
 
-        <div>
-          Trạng thái: <span>Còn hoạt động</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Phone:
+            </div>
+            <div>{customer.phone}</div>
+          </div>
 
-        <div>
-          Ngày thêm: <span>20/12/2000</span>
-        </div>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Giới tính:
+            </div>
+            <div>{customer.gender ? "Nam" : "Nữ"}</div>
+          </div>
 
-        <div>
-          Ẩn: <span>Không</span>
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
+              Ẩn:
+            </div>
+            <div>{customer.isDeleted ? "Có" : "Không"}</div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

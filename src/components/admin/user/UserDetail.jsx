@@ -1,29 +1,44 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../features/user/userSlice";
 
 const UserDetail = () => {
   const params = useParams();
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const getuserById = async (id) => {
+    const getUserById = async (id) => {
       const res = await axios.get(`https://localhost:44328/api/users/${id}`);
-
-      console.log(res);
-      setUser(res.data);
+      setUserData(res.data);
     };
 
-    if (params.id) {
-      getuserById(params?.id);
+    if (params.id && user) {
+      if (params.id == user.id) {
+        return navigate("/admin/user");
+      }
+
+      getUserById(params?.id);
     }
-  }, []);
+  }, [user]);
 
   return (
     <div>
+      <Button
+        className="mt-3 ms-5 d-flex align-items-center"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate("/admin/user")}>
+        Quay lại
+      </Button>
+
       <div className="title">Thông tin người dùng</div>
 
-      {user && (
+      {userData && (
         <div
           style={{
             width: "fit-content",
@@ -34,37 +49,44 @@ const UserDetail = () => {
           }}>
           <div className="d-flex gap-3">
             <div className="fw-bold" style={{ minWidth: 100 }}>
+              Id:
+            </div>
+            <div>{userData.id}</div>
+          </div>
+
+          <div className="d-flex gap-3">
+            <div className="fw-bold" style={{ minWidth: 100 }}>
               Tên:
             </div>
-            <div>{user.fullName}</div>
+            <div>{userData.fullName}</div>
           </div>
 
           <div className="d-flex gap-3">
             <div className="fw-bold" style={{ minWidth: 100 }}>
               Email:
             </div>
-            <div>{user.email}</div>
+            <div>{userData.email}</div>
           </div>
 
           <div className="d-flex gap-3">
             <div className="fw-bold" style={{ minWidth: 100 }}>
               Address:
             </div>
-            <div>{user.address}</div>
+            <div>{userData.address}</div>
           </div>
 
           <div className="d-flex gap-3">
             <div className="fw-bold" style={{ minWidth: 100 }}>
               Phone:
             </div>
-            <div>{user.phone}</div>
+            <div>{userData.phone}</div>
           </div>
 
           <div className="d-flex gap-3">
             <div className="fw-bold" style={{ minWidth: 100 }}>
               Giới tính:
             </div>
-            <div>{user.gender ? "Nam" : "Nữ"}</div>
+            <div>{userData.gender ? "Nam" : "Nữ"}</div>
           </div>
 
           <div className="d-flex gap-3">
@@ -72,9 +94,9 @@ const UserDetail = () => {
               Quyền:
             </div>
             <div>
-              {user.role === 0
+              {userData.role === 0
                 ? "Nhân viên"
-                : user.role === 1
+                : userData.role === 1
                 ? "Admin"
                 : "Super admin"}
             </div>
@@ -84,7 +106,7 @@ const UserDetail = () => {
             <div className="fw-bold" style={{ minWidth: 100 }}>
               Ẩn:
             </div>
-            <div>{user.isDeleted ? "Có" : "Không"}</div>
+            <div>{userData.isDeleted ? "Có" : "Không"}</div>
           </div>
         </div>
       )}

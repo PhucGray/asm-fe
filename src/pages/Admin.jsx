@@ -1,15 +1,17 @@
 import "../styles/bootstrap.scss";
 //
-import React, { useEffect } from "react";
+import React from "react";
 import { Button, Menu, message, Popconfirm } from "antd";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
-import { useSelector } from "react-redux";
-import { selectUser } from "../features/user/userSlice";
+import { logout, selectUser } from "../features/user/userSlice";
 
 const Admin = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector(selectUser);
 
   const menuItems = [
@@ -33,58 +35,62 @@ const Admin = () => {
   ];
 
   const confirm = () => {
-    navigate("/");
+    dispatch(logout());
     message.success("Đăng xuất thành công");
+    navigate("/login");
   };
 
   const cancel = (e) => {};
 
-  useEffect(() => {
-    if (user) {
-      if (user.role === 0) return navigate("/");
-    }
-  }, []);
+  if (localStorage.getItem("token") && user && user.role === 0)
+    return <Navigate to="/" />;
+
+  if (!localStorage.getItem("token")) return <Navigate to="/login" />;
 
   return (
-    <div className="admin__page">
-      <div className="navbar">
-        <div onClick={() => navigate("/admin")} style={{ cursor: "pointer" }}>
-          <img className="logo" src={LogoImg} />
+    <>
+      <div className="admin__page">
+        <div className="navbar">
+          <div onClick={() => navigate("/admin")} style={{ cursor: "pointer" }}>
+            <img className="logo" src={LogoImg} />
+          </div>
+
+          <div className="d-flex align-items-center gap-2">
+            <div>
+              Chào: <span className="fw-bold">{user?.fullName}</span>
+            </div>
+
+            <Popconfirm
+              title="Bạn có chắc chắn muốn đăng xuất ?"
+              onConfirm={confirm}
+              onCancel={cancel}
+              okText="Có"
+              cancelText="Huỷ">
+              <Button>Đăng xuất</Button>
+            </Popconfirm>
+          </div>
         </div>
 
-        <div className="d-flex align-items-center gap-2">
-          <div>admin@gmail.com</div>
+        <div className="main">
+          <div className="sidebar">
+            <Menu
+              // defaultSelectedKeys={["food"]}
+              mode="inline"
+              inlineCollapsed={false}
+              items={menuItems}
+              style={{ border: "none" }}
+              onClick={({ key }) => {
+                navigate(key);
+              }}
+            />
+          </div>
 
-          <Popconfirm
-            title="Bạn có chắc chắn muốn đăng xuất ?"
-            onConfirm={confirm}
-            onCancel={cancel}
-            okText="Có"
-            cancelText="Huỷ">
-            <Button>Đăng xuất</Button>
-          </Popconfirm>
+          <div className="admin-swap-component">
+            <Outlet />
+          </div>
         </div>
       </div>
-
-      <div className="main">
-        <div className="sidebar">
-          <Menu
-            defaultSelectedKeys={["1"]}
-            mode="inline"
-            inlineCollapsed={false}
-            items={menuItems}
-            style={{ border: "none" }}
-            onClick={({ key }) => {
-              navigate(key);
-            }}
-          />
-        </div>
-
-        <div className="admin-swap-component">
-          <Outlet />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

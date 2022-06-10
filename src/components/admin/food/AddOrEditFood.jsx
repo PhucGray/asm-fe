@@ -177,7 +177,6 @@ const AddOrEditFood = ({ page = "add" }) => {
                 <Button>Upload</Button>
               </Upload>
             </FormItem>
-            {/* <input type="file" onUploadChange={handleUploadChange} /> */}
           </Col>
         </Row>
 
@@ -192,7 +191,7 @@ const AddOrEditFood = ({ page = "add" }) => {
                   message: "Vui lòng nhập giá",
                 },
               ]}>
-              <InputNumber className="w-100" />
+              <InputNumber className="w-100" precision={0} />
             </Form.Item>
           </Col>
 

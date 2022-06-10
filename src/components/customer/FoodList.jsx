@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addFoodToCart } from "../../features/cart/cartSlice";
+import { formatMoneyVND } from "../../utils/formatMoney";
 
 const FoodList = () => {
   const dispatch = useDispatch();
@@ -15,9 +16,6 @@ const FoodList = () => {
   useEffect(() => {
     const getFoodList = async () => {
       const res = await axios.get("https://localhost:44328/api/foods");
-
-      console.log(res.data);
-
       setFoodList(res.data.filter((i) => i.isDeleted === false));
     };
 
@@ -39,7 +37,7 @@ const FoodList = () => {
             <div style={{ color: "#757575" }}>{food.description}</div>
 
             <div className="fw-bold text-danger" style={{ fontSize: 25 }}>
-              {food.price} VND
+              {formatMoneyVND(food.price)}
             </div>
 
             <Button

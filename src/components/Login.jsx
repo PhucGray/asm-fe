@@ -25,12 +25,17 @@ const Login = () => {
     if (res.data.success) {
       const { token, role } = res.data.data;
 
-      console.log("role: " + res.data);
+      console.log(role);
 
       dispatch(setUser(res.data.data));
       message.success("Đăng nhập thành công");
       localStorage.setItem("token", token);
-      navigate("/");
+
+      if (role === 0) {
+        navigate("/");
+      } else {
+        navigate("admin");
+      }
     } else {
       message.error(res.data?.message);
     }

@@ -21,7 +21,7 @@ import OrderDetailHistory from "./components/customer/OrderDetailHistory";
 import OrderHistory from "./components/customer/OrderHistory";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { selectUser, setUser } from "./features/user/userSlice";
+import { logout, selectUser, setUser } from "./features/user/userSlice";
 import Admin from "./pages/Admin";
 import Customer from "./pages/Customer";
 
@@ -41,8 +41,12 @@ const App = () => {
           },
         );
 
-        const user = res.data.data;
-        dispatch(setUser(user));
+        if (res.data.success) {
+          const user = res.data.data;
+          dispatch(setUser(user));
+        } else {
+          dispatch(logout());
+        }
       } catch (error) {
         console.log("app error: " + error);
       }
@@ -94,9 +98,20 @@ const App = () => {
 
       <Route
         path="register"
-        element={user ? <Navigate to="/" /> : <Register />}
+        element={
+          user ? (
+            <Navigate to={user.role === 0 ? "/" : "/admin"} />
+          ) : (
+            <Register />
+          )
+        }
       />
-      <Route path="login" element={user ? <Navigate to="/" /> : <Login />} />
+      <Route
+        path="login"
+        element={
+          user ? <Navigate to={user.role === 0 ? "/" : "/admin"} /> : <Login />
+        }
+      />
     </Routes>
   );
 };

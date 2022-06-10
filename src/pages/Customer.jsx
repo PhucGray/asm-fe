@@ -4,11 +4,11 @@ import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
-import { Button, Badge, Popconfirm, Avatar } from "antd";
+import { Button, Badge, Popconfirm, Avatar, message } from "antd";
 import { ShoppingCartOutlined, HistoryOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart } from "../features/cart/cartSlice";
-import { selectUser, setUser } from "../features/user/userSlice";
+import { logout, selectUser, setUser } from "../features/user/userSlice";
 
 const Customer = () => {
   const cart = useSelector(selectCart);
@@ -17,10 +17,9 @@ const Customer = () => {
   const navigate = useNavigate();
 
   const confirm = () => {
-    dispatch(setUser(null));
-    localStorage.clear();
+    dispatch(logout());
     message.success("Đăng xuất thành công");
-    navigate("/");
+    navigate("/login");
   };
 
   const cancel = (e) => {};

@@ -1,12 +1,14 @@
-import { Button, message, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, message, Popconfirm, Space, Table, Tag, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { formatMoneyVND } from "../../../utils/formatMoney";
 
 const ManageFood = () => {
   const navigate = useNavigate();
 
   const [foodData, setFoodData] = useState([]);
+  const [tableLoading, setTableLoading] = useState(true);
 
   const handleDeleteFood = async (id) => {
     const res = await axios({
@@ -39,13 +41,25 @@ const ManageFood = () => {
       title: "Giá",
       dataIndex: "price",
       key: "price",
+      render: (value) => <>{formatMoneyVND(value)}</>,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
-
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
+      render: (value) => (
+        <Tooltip title={value}>
+          <div className="text-truncate" style={{ maxWidth: 90 }}>
+            {value}
+          </div>
+        </Tooltip>
+      ),
+    },
     {
       title: "Hành động",
       key: "action",
@@ -78,10 +92,12 @@ const ManageFood = () => {
           name: i.name,
           price: i.price,
           status: i.status ? "Còn hàng" : "Hết hàng",
+          description: i.description,
         };
       });
 
       setFoodData(foodList);
+      setTableLoading(false);
     };
 
     getFoodList();
@@ -95,7 +111,7 @@ const ManageFood = () => {
         Thêm món
       </Button>
 
-      <Table columns={columns} dataSource={foodData} />
+      <Table loading={tableLoading} columns={columns} dataSource={foodData} />
     </div>
   );
 };
