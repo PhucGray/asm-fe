@@ -10,7 +10,7 @@ import {
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -20,7 +20,11 @@ const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
+  const [loading, setLoading] = useState(false);
+
   const onFinish = async (data) => {
+    setLoading(true);
+
     const res = await axios({
       method: "post",
       url: "https://localhost:44328/api/auth/register",
@@ -34,6 +38,8 @@ const Register = () => {
     } else {
       message.error(res.data?.message);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -166,7 +172,8 @@ const Register = () => {
             className="d-block w-50 mx-auto mt-3 rounded"
             type="primary"
             style={{ height: 45 }}
-            htmlType="submit">
+            htmlType="submit"
+            loading={loading}>
             Đăng ký
           </Button>
         </Form.Item>

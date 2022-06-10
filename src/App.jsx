@@ -1,5 +1,7 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Route, Routes } from "react-router-dom";
 import CustomerDetail from "./components/admin/customer/CustomerDetail";
 import ManageCustomer from "./components/admin/customer/ManageCustomer";
 import AddOrEditFood from "./components/admin/food/AddOrEditFood";
@@ -19,10 +21,40 @@ import OrderDetailHistory from "./components/customer/OrderDetailHistory";
 import OrderHistory from "./components/customer/OrderHistory";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import { selectUser, setUser } from "./features/user/userSlice";
 import Admin from "./pages/Admin";
 import Customer from "./pages/Customer";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    const getProfile = async (token) => {
+      try {
+        const res = await axios.get(
+          "https://localhost:44328/api/auth/profile",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        const user = res.data.data;
+        dispatch(setUser(user));
+      } catch (error) {
+        console.log("app error: " + error);
+      }
+    };
+
+    const token = localStorage.getItem("token");
+
+    if (token && !user) {
+      getProfile(token);
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Customer />}>
@@ -60,8 +92,11 @@ const App = () => {
         </Route>
       </Route>
 
-      <Route path="register" element={<Register />} />
-      <Route path="login" element={<Login />} />
+      <Route
+        path="register"
+        element={user ? <Navigate to="/" /> : <Register />}
+      />
+      <Route path="login" element={user ? <Navigate to="/" /> : <Login />} />
     </Routes>
   );
 };

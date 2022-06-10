@@ -123,7 +123,7 @@ const Cart = () => {
             dataSource={cartData}
           />
 
-          {cart !== null && (
+          {cart.length > 0 && (
             <div
               className="bg-white rounded px-4 py-2 d-flex flex-column gap-2"
               style={{ width: 400 }}>

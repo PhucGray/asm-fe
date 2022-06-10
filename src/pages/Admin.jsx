@@ -1,13 +1,16 @@
 import "../styles/bootstrap.scss";
 //
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Menu, message, Popconfirm } from "antd";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
+import { useSelector } from "react-redux";
+import { selectUser } from "../features/user/userSlice";
 
 const Admin = () => {
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
 
   const menuItems = [
     {
@@ -35,6 +38,12 @@ const Admin = () => {
   };
 
   const cancel = (e) => {};
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === 0) return navigate("/");
+    }
+  }, []);
 
   return (
     <div className="admin__page">

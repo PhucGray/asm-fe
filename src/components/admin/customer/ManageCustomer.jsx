@@ -1,5 +1,6 @@
 import { Button, Space, Table, Tag } from "antd";
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ManageCustomer = () => {
@@ -45,6 +46,12 @@ const ManageCustomer = () => {
       gender: "Nam",
     },
   ];
+
+  useEffect(() => {
+    const getCustomerList = async () => {
+      const res = await axios.get("https://localhost:44328/api/user");
+    };
+  }, []);
   return (
     <div>
       <div className="title">Quản lí người dùng</div>

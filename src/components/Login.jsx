@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../features/user/userSlice";
@@ -11,7 +11,11 @@ const Login = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
+  const [loading, setLoading] = useState(false);
+
   const onFinish = async (data) => {
+    setLoading(true);
+
     const res = await axios({
       method: "post",
       url: "https://localhost:44328/api/auth/login",
@@ -21,7 +25,7 @@ const Login = () => {
     if (res.data.success) {
       const { token, role } = res.data.data;
 
-      console.log("role: " + role);
+      console.log("role: " + res.data);
 
       dispatch(setUser(res.data.data));
       message.success("Đăng nhập thành công");
@@ -30,6 +34,8 @@ const Login = () => {
     } else {
       message.error(res.data?.message);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -95,7 +101,8 @@ const Login = () => {
             className="d-block w-50 mx-auto mt-3 rounded"
             type="primary"
             style={{ height: 45 }}
-            htmlType="submit">
+            htmlType="submit"
+            loading={loading}>
             Đăng nhập
           </Button>
         </Form.Item>

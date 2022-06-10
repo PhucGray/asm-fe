@@ -58,10 +58,7 @@ const Customer = () => {
               onCancel={cancel}
               okText="Có"
               cancelText="Huỷ">
-              <Avatar
-                src="https://joeschmoe.io/api/v1/random"
-                style={{ cursor: "pointer" }}
-              />
+              <Button>{user?.fullName}</Button>
             </Popconfirm>
           ) : (
             <Button
