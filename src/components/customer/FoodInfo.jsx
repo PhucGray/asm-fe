@@ -1,13 +1,31 @@
 import { Button, Image } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addFoodToCart } from "../../features/cart/cartSlice";
+import { addFoodToCart, clearCart } from "../../features/cart/cartSlice";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const FoodInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const params = useParams();
+  const [food, setFood] = useState(null);
+
+  useEffect(() => {
+    // dispatch(clearCart());
+    const getFoodById = async (id) => {
+      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+
+      console.log(res.data);
+      setFood(res.data);
+    };
+
+    if (params.id) {
+      getFoodById(params?.id);
+    }
+  }, []);
 
   return (
     <div className="py-4 px-5">
@@ -20,35 +38,39 @@ const FoodInfo = () => {
         Quay lại
       </Button>
 
-      <div className="d-flex justify-content-center gap-5">
-        <Image src="https://burgerking.vn/media/catalog/product/cache/1/small_image/316x/9df78eab33525d08d6e5fb8d27136e95/1/-/1-mieng-ga-gion-ko-cay.jpg" />
+      {food && (
+        <>
+          <div className="d-flex justify-content-center gap-5">
+            <Image src={`https://localhost:44328/images/${food.image}`} />
 
-        <div>
-          <div style={{ fontSize: 20, fontWeight: "bold" }}>
-            Gà giòn không cay
+            <div>
+              <div style={{ fontSize: 20, fontWeight: "bold" }}>
+                {food.name}
+              </div>
+              <div style={{ color: "#757575" }}>{food.description}</div>
+              <div className="fw-bold text-danger" style={{ fontSize: 25 }}>
+                {food.price} VND
+              </div>
+            </div>
           </div>
-          <div style={{ color: "#757575" }}>1 cái đùi gà bự chà bá</div>
-          <div className="fw-bold text-danger" style={{ fontSize: 25 }}>
-            36,000 VND
+
+          <div className="d-flex justify-content-center mt-3 gap-3">
+            <Button
+              onClick={() => dispatch(addFoodToCart(food))}
+              style={{ height: 45 }}
+              type="primary">
+              Thêm vào giỏ hàng
+            </Button>
+
+            <Button
+              onClick={() => navigate("/cart")}
+              style={{ height: 45 }}
+              type="ghost">
+              Đi đến giỏ hàng
+            </Button>
           </div>
-        </div>
-      </div>
-
-      <div className="d-flex justify-content-center mt-3 gap-3">
-        <Button
-          onClick={() => dispatch(addFoodToCart({ name: "ga" }))}
-          style={{ height: 45 }}
-          type="primary">
-          Thêm vào giỏ hàng
-        </Button>
-
-        <Button
-          onClick={() => navigate("/cart")}
-          style={{ height: 45 }}
-          type="ghost">
-          Đi đến giỏ hàng
-        </Button>
-      </div>
+        </>
+      )}
     </div>
   );
 };

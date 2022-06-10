@@ -1,10 +1,59 @@
-import { Button, Space, Table, Modal, Form, Input, message } from "antd";
-import React, { useState } from "react";
+import {
+  Button,
+  Space,
+  Table,
+  Modal,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+} from "antd";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import {
+  clearCart,
+  removeItem,
+  selectCart,
+} from "../../features/cart/cartSlice";
 
 const Cart = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isModalCheckoutOpen, setIsModalCheckoutOpen] = useState(false);
+
+  //
+  const cart = useSelector(selectCart);
+  const [cartData, setCartData] = useState([]);
+  const [tempPrice, setTempPrice] = useState(0);
+
+  useEffect(() => {
+    // dispatch(clearCart());
+  }, []);
+
+  useEffect(() => {
+    if (cart) {
+      setCartData(
+        cart.map((i) => {
+          return {
+            key: i.id,
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            totalPrice: i.price * i.quantity,
+          };
+        }),
+      );
+
+      let tempPrice = 0;
+
+      cart.map((i) => {
+        tempPrice += i.price * i.quantity;
+      });
+
+      setTempPrice(tempPrice);
+    }
+  }, [cart]);
 
   const columns = [
     {
@@ -32,19 +81,18 @@ const Cart = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={() => navigate("/awfawfwafwaf")}>Chi tiết</a>
-          <a>Xoá</a>
+          <a onClick={() => navigate(`/${record.key}`)}>Chi tiết</a>
+
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xoá món ăn này"
+            onConfirm={() => dispatch(removeItem({ id: record.key }))}
+            onCancel={null}
+            okText="Có"
+            cancelText="Không">
+            <a>Xoá</a>
+          </Popconfirm>
         </Space>
       ),
-    },
-  ];
-  const data = [
-    {
-      key: "1",
-      name: "Gà rán",
-      price: 200000,
-      quantity: 2,
-      totalPrice: 200000,
     },
   ];
 
@@ -62,51 +110,58 @@ const Cart = () => {
   const handleCancel = () => {
     setIsModalCheckoutOpen(false);
   };
+
   return (
     <>
       <div className="py-4 px-5">
         <div className="title">Giỏ hàng</div>
 
         <div className="d-flex gap-5">
-          <Table className="flex-grow-1" columns={columns} dataSource={data} />
+          <Table
+            className="flex-grow-1"
+            columns={columns}
+            dataSource={cartData}
+          />
 
-          <div
-            className="bg-white rounded px-4 py-2 d-flex flex-column gap-2"
-            style={{ width: 400 }}>
-            <div className="fw-bold" style={{ fontSize: 30 }}>
-              Thanh toán
+          {cart !== null && (
+            <div
+              className="bg-white rounded px-4 py-2 d-flex flex-column gap-2"
+              style={{ width: 400 }}>
+              <div className="fw-bold" style={{ fontSize: 30 }}>
+                Thanh toán
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center">
+                <div>Tạm tính</div>
+                <div>{tempPrice} VNĐ</div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center">
+                <div>VAT</div>
+                <div>10 (%)</div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center">
+                <div>Tổng</div>
+                <div>{tempPrice * 0.9} VNĐ</div>
+              </div>
+
+              <Button
+                onClick={() => navigate("/")}
+                className="rounded"
+                style={{ height: 45 }}
+                type="primary">
+                Tiếp tục mua hàng
+              </Button>
+              <Button
+                onClick={() => setIsModalCheckoutOpen(true)}
+                className="rounded"
+                style={{ height: 45 }}
+                type="ghost">
+                Thanh Toán
+              </Button>
             </div>
-
-            <div className="d-flex justify-content-between align-items-center">
-              <div>Tạm tính</div>
-              <div>200000</div>
-            </div>
-
-            <div className="d-flex justify-content-between align-items-center">
-              <div>VAT</div>
-              <div>10 (%)</div>
-            </div>
-
-            <div className="d-flex justify-content-between align-items-center">
-              <div>Tổng</div>
-              <div>220000</div>
-            </div>
-
-            <Button
-              onClick={() => navigate("/")}
-              className="rounded"
-              style={{ height: 45 }}
-              type="primary">
-              Tiếp tục mua hàng
-            </Button>
-            <Button
-              onClick={() => setIsModalCheckoutOpen(true)}
-              className="rounded"
-              style={{ height: 45 }}
-              type="ghost">
-              Thanh Toán
-            </Button>
-          </div>
+          )}
         </div>
       </div>
 

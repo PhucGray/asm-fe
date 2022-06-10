@@ -1,13 +1,35 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
+import axios from "axios";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../features/user/userSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (data) => {
+    const res = await axios({
+      method: "post",
+      url: "https://localhost:44328/api/auth/login",
+      data: data,
+    });
+
+    if (res.data.success) {
+      const { token, role } = res.data.data;
+
+      console.log("role: " + role);
+
+      dispatch(setUser(res.data.data));
+      message.success("Đăng nhập thành công");
+      localStorage.setItem("token", token);
+      navigate("/");
+    } else {
+      message.error(res.data?.message);
+    }
   };
 
   return (
@@ -22,10 +44,11 @@ const Login = () => {
       <div className="title mt-3">Đăng nhập</div>
 
       <Form
+        form={form}
         name="login"
         onFinish={onFinish}
         initialValues={{
-          isUser: false,
+          isEmployee: false,
         }}
         autoComplete="off"
         layout="vertical"
@@ -63,7 +86,7 @@ const Login = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item name="isUser" valuePropName="checked">
+        <Form.Item name="isEmployee" valuePropName="checked">
           <Checkbox>Bạn là nhân viên ?</Checkbox>
         </Form.Item>
 

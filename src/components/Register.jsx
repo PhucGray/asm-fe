@@ -1,16 +1,39 @@
-import { Button, Col, Form, Input, InputNumber, Row, Select } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Row,
+  Select,
+} from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const { Option } = Select;
 
 const Register = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async (data) => {
+    const res = await axios({
+      method: "post",
+      url: "https://localhost:44328/api/auth/register",
+      data: data,
+    });
+
+    if (res.data.success) {
+      message.success("Đăng ký thành công");
+      form.resetFields();
+      navigate("/login");
+    } else {
+      message.error(res.data?.message);
+    }
   };
 
   return (
@@ -30,7 +53,8 @@ const Register = () => {
         onFinish={onFinish}
         autoComplete="off"
         layout="vertical"
-        style={{ maxWidth: 450, marginInline: "auto" }}>
+        style={{ maxWidth: 450, marginInline: "auto" }}
+        form={form}>
         <Form.Item
           label="Họ và tên"
           name="fullName"
@@ -118,8 +142,8 @@ const Register = () => {
               label="Giới tính"
               rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}>
               <Select placeholder="Chọn giới tính">
-                <Option value={1}>Nam</Option>
-                <Option value={0}>Nữ</Option>
+                <Option value={true}>Nam</Option>
+                <Option value={false}>Nữ</Option>
               </Select>
             </Form.Item>
           </Col>
