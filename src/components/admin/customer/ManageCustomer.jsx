@@ -53,19 +53,21 @@ const ManageCustomer = () => {
         `${import.meta.env.VITE_APP_API}users/customers`,
       );
 
-      const customerList = res.data?.map((i) => {
-        return {
-          key: i.id,
-          id: i.id,
-          email: i.email,
-          fullName: i.fullName,
-          gender: i.gender ? "Nam" : "Nữ",
-          phone: i.phone,
-        };
-      });
+      if (res.data.success) {
+        const customerList = res.data.data.map((i) => {
+          return {
+            key: i.id,
+            id: i.id,
+            email: i.email,
+            fullName: i.fullName,
+            gender: i.gender ? "Nam" : "Nữ",
+            phone: i.phone,
+          };
+        });
 
-      setCustomerData(customerList);
-      setTableLoading(false);
+        setCustomerData(customerList);
+        setTableLoading(false);
+      }
     };
 
     getCustomerList();

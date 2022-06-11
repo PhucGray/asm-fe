@@ -10,8 +10,9 @@ const FoodDetail = () => {
     const getFoodById = async (id) => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
 
-      console.log(res);
-      setFood(res.data);
+      if (res.data.success) {
+        setFood(res.data.data);
+      }
     };
 
     if (params.id) {

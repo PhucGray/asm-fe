@@ -36,7 +36,7 @@ const Register = () => {
       form.resetFields();
       navigate("/login");
     } else {
-      message.error(res.data?.message);
+      message.error(res.data.message);
     }
 
     setLoading(false);

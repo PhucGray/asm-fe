@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addFoodToCart, clearCart } from "../../features/cart/cartSlice";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const FoodInfo = () => {
@@ -12,13 +12,23 @@ const FoodInfo = () => {
 
   const params = useParams();
   const [food, setFood] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getFoodById = async (id) => {
-      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
+      if (!isNaN(parseInt(id))) {
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_API}foods/${id}`,
+        );
 
-      console.log(res.data);
-      setFood(res.data);
+        if (res.data.success) {
+          setFood(res.data.data);
+        } else {
+          setFood(null);
+        }
+      }
+
+      setLoading(false);
     };
 
     if (params.id) {
@@ -26,19 +36,21 @@ const FoodInfo = () => {
     }
   }, []);
 
-  return (
-    <div className="py-4 px-5">
-      <Button
-        type="dashed"
-        className="mt-3 ms-5 d-flex align-items-center"
-        style={{ background: "transparent" }}
-        icon={<ArrowLeftOutlined />}
-        onClick={() => navigate("/")}>
-        Quay lại
-      </Button>
+  if (!food && !loading) return <Navigate to="/not-found" />;
 
+  return (
+    <>
       {food && (
-        <>
+        <div className="py-4 px-5">
+          <Button
+            type="dashed"
+            className="mt-3 ms-5 d-flex align-items-center"
+            style={{ background: "transparent" }}
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate("/")}>
+            Quay lại
+          </Button>
+
           <div className="d-flex justify-content-center gap-5">
             <Image src={`https://localhost:44328/images/${food.image}`} />
 
@@ -68,9 +80,9 @@ const FoodInfo = () => {
               Đi đến giỏ hàng
             </Button>
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

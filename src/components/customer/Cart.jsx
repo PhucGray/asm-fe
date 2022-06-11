@@ -41,7 +41,10 @@ const Cart = () => {
   useEffect(() => {
     const getVAT = async () => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}orders/vat`);
-      setVat(res.data);
+
+      if (res.data.success) {
+        setVat(res.data.data);
+      }
     };
 
     getVAT();
@@ -140,29 +143,31 @@ const Cart = () => {
         },
       });
 
-      const orderId = addOrderRes.data.id;
+      if (addOrderRes.data.success) {
+        const orderId = addOrderRes.data.data.id;
 
-      const addOrderDetailsRes = await axios({
-        method: "post",
-        url: `${import.meta.env.VITE_APP_API}orders/orderDetails`,
-        data: cart.map((i) => {
-          return {
-            foodName: i.name,
-            price: i.price,
-            quantity: i.quantity,
-            totalPrice: i.quantity * i.price,
-            foodId: i.id,
-            orderId,
-          };
-        }),
-      });
+        const addOrderDetailsRes = await axios({
+          method: "post",
+          url: `${import.meta.env.VITE_APP_API}orders/orderDetails`,
+          data: cart.map((i) => {
+            return {
+              foodName: i.name,
+              price: i.price,
+              quantity: i.quantity,
+              totalPrice: i.quantity * i.price,
+              foodId: i.id,
+              orderId,
+            };
+          }),
+        });
 
-      console.log(addOrderDetailsRes.data);
-
-      message.success({ content: "Đặt hàng thành công" });
-      setIsModalCheckoutOpen(false);
-      dispatch(clearCart());
-      form.setFieldsValue(null);
+        if (addOrderDetailsRes.data.success) {
+          message.success({ content: "Đặt hàng thành công" });
+          setIsModalCheckoutOpen(false);
+          dispatch(clearCart());
+          form.setFieldsValue(null);
+        }
+      }
     } catch (error) {
       setIsModalCheckoutOpen(false);
       message.error(error);

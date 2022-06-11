@@ -1,7 +1,8 @@
+import { Button, Result } from "antd";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import CustomerDetail from "./components/admin/customer/CustomerDetail";
 import ManageCustomer from "./components/admin/customer/ManageCustomer";
 import AddOrEditFood from "./components/admin/food/AddOrEditFood";
@@ -26,6 +27,7 @@ import Customer from "./pages/Customer";
 
 const App = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector(selectUser);
 
   useEffect(() => {
@@ -104,6 +106,7 @@ const App = () => {
           )
         }
       />
+
       <Route
         path="login"
         element={
@@ -112,6 +115,22 @@ const App = () => {
           ) : (
             <Login />
           )
+        }
+      />
+
+      <Route
+        path="not-found"
+        element={
+          <Result
+            status="404"
+            title="404"
+            subTitle="Xin lỗi, trang bạn đang tìm kiếm không tồn tại."
+            extra={
+              <Button type="primary" onClick={() => navigate("/")}>
+                Trở về trang chủ
+              </Button>
+            }
+          />
         }
       />
     </Routes>

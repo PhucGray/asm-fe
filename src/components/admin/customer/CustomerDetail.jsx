@@ -12,7 +12,10 @@ const CustomerDetail = () => {
   useEffect(() => {
     const getCustomerById = async (id) => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}users/${id}`);
-      setCustomer(res.data);
+
+      if (res.data.success) {
+        setCustomer(res.data.data);
+      }
     };
 
     if (params.id) {

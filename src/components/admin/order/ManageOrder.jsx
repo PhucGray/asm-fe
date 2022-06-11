@@ -14,9 +14,8 @@ const ManageOrder = () => {
   const [isUpdateStatusModalOpen, setIsUpdateStatusModalOpen] = useState(false);
   const [orderStatuses, setOrderStatuses] = useState([]);
   const [orderRecord, setOrderRecord] = useState(null);
-  const [statusId, setStatusId] = useState(0);
-  const [orderId, setOrderId] = useState(0);
   const [tableLoading, setTableLoading] = useState(true);
+  const [finishLoading, setFinishLoading] = useState(false);
 
   const columns = [
     {
@@ -88,11 +87,11 @@ const ManageOrder = () => {
         `${import.meta.env.VITE_APP_API}orders/statuses`,
       );
 
-      if (getOrdersRes.data && getOrderStatusesRes.data) {
-        setOrderStatuses(getOrderStatusesRes.data);
+      if (getOrdersRes.data.success && getOrderStatusesRes.data.success) {
+        setOrderStatuses(getOrderStatusesRes.data.data);
 
         setOrdersList(
-          getOrdersRes.data.map((i) => {
+          getOrdersRes.data.data.map((i) => {
             const formatedDate = formatCsharpDate(i.createdAt);
 
             return {
@@ -114,6 +113,8 @@ const ManageOrder = () => {
   }, []);
 
   const onFinish = async (values) => {
+    setFinishLoading(true);
+
     try {
       const res = await axios({
         method: "put",
@@ -123,8 +124,8 @@ const ManageOrder = () => {
         },
       });
 
-      if (res.data) {
-        const order = res.data;
+      if (res.data.success) {
+        const order = res.data.data;
 
         setOrdersList(
           [...ordersList].map((i) => {
@@ -141,6 +142,8 @@ const ManageOrder = () => {
       }
     } catch (error) {
       message.error("Update order status error");
+    } finally {
+      setFinishLoading(false);
     }
   };
 
@@ -150,6 +153,7 @@ const ManageOrder = () => {
       <Table loading={tableLoading} columns={columns} dataSource={ordersList} />
 
       <Modal
+        confirmLoading={finishLoading}
         title="Thay đổi trạng thái đơn hàng"
         visible={isUpdateStatusModalOpen && orderStatuses.length > 0}
         onCancel={() => setIsUpdateStatusModalOpen(false)}

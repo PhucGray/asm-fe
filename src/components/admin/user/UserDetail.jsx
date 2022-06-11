@@ -16,8 +16,8 @@ const UserDetail = () => {
     const getUserById = async (id) => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}users/${id}`);
 
-      if (res.data) {
-        setUserData(res.data);
+      if (res.data.success) {
+        setUserData(res.data.data);
       } else {
         message.error("Không tồn tại người dùng này.");
         navigate("/admin/user");

@@ -52,7 +52,7 @@ const AddOrEditFood = ({ page = "add" }) => {
           },
         });
 
-        if (res.data) {
+        if (res.data.success) {
           form.resetFields();
           setFileList([]);
           message.success("Thêm món thành công");
@@ -69,7 +69,7 @@ const AddOrEditFood = ({ page = "add" }) => {
           },
         });
 
-        if (res.data) {
+        if (res.data.success) {
           message.success("Sửa món thành công");
         }
       }
@@ -104,30 +104,32 @@ const AddOrEditFood = ({ page = "add" }) => {
     const getFoodById = async (id) => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
 
-      const {
-        id: foodId,
-        name,
-        price,
-        specialPrice,
-        image,
-        status,
-        isDeleted,
-        description,
-      } = res.data;
+      if (res.data.success) {
+        const {
+          id: foodId,
+          name,
+          price,
+          specialPrice,
+          image,
+          status,
+          isDeleted,
+          description,
+        } = res.data.data;
 
-      setfoodId(foodId);
+        setfoodId(foodId);
 
-      form.setFieldsValue({
-        Name: name,
-        Price: price,
-        SpecialPrice: specialPrice,
-        Status: status,
-        IsDeleted: isDeleted,
-        Description: description,
-        Image: image,
-      });
+        form.setFieldsValue({
+          Name: name,
+          Price: price,
+          SpecialPrice: specialPrice,
+          Status: status,
+          IsDeleted: isDeleted,
+          Description: description,
+          Image: image,
+        });
 
-      setFileList([{ url: `${import.meta.env.VITE_APP_IMAGE}${image}` }]);
+        setFileList([{ url: `${import.meta.env.VITE_APP_IMAGE}${image}` }]);
+      }
     };
 
     if (params.id) {

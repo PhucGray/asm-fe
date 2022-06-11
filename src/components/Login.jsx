@@ -35,7 +35,7 @@ const Login = () => {
         navigate("admin");
       }
     } else {
-      message.error(res.data?.message);
+      message.error(res.data.message);
     }
 
     setLoading(false);

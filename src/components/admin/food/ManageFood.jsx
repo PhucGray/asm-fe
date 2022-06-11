@@ -16,7 +16,7 @@ const ManageFood = () => {
       url: `${import.meta.env.VITE_APP_API}foods/${id}`,
     });
 
-    if (res.data) {
+    if (res.data.success) {
       message.success("Xoá món thành công");
 
       setFoodData([...foodData].filter((food) => food.key !== id)).map(
@@ -80,24 +80,25 @@ const ManageFood = () => {
     },
   ];
 
-  //
   useEffect(() => {
     const getFoodList = async () => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}foods`);
 
-      const foodList = res.data?.map((i) => {
-        return {
-          key: i.id,
-          image: `${import.meta.env.VITE_APP_IMAGE}${i.image}`,
-          name: i.name,
-          price: i.price,
-          status: i.status ? "Còn hàng" : "Hết hàng",
-          description: i.description,
-        };
-      });
+      if (res.data.success) {
+        const foodList = res.data.data.map((i) => {
+          return {
+            key: i.id,
+            image: `${import.meta.env.VITE_APP_IMAGE}${i.image}`,
+            name: i.name,
+            price: i.price,
+            status: i.status ? "Còn hàng" : "Hết hàng",
+            description: i.description,
+          };
+        });
 
-      setFoodData(foodList);
-      setTableLoading(false);
+        setFoodData(foodList);
+        setTableLoading(false);
+      }
     };
 
     getFoodList();

@@ -82,20 +82,22 @@ const ManageUser = () => {
     const getUserList = async () => {
       const res = await axios.get(`${import.meta.env.VITE_APP_API}users`);
 
-      const userList = res.data.map((i) => {
-        return {
-          key: i.id,
-          id: i.id,
-          email: i.email,
-          fullName: i.fullName,
-          gender: i.gender ? "Nam" : "Nữ",
-          phone: i.phone,
-          role: i.roleId,
-        };
-      });
+      if (res.data.success) {
+        const userList = res.data.data.map((i) => {
+          return {
+            key: i.id,
+            id: i.id,
+            email: i.email,
+            fullName: i.fullName,
+            gender: i.gender ? "Nam" : "Nữ",
+            phone: i.phone,
+            role: i.roleId,
+          };
+        });
 
-      setUserData(userList);
-      setTableLoading(false);
+        setUserData(userList);
+        setTableLoading(false);
+      }
     };
 
     if (user) {

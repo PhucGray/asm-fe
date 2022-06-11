@@ -52,11 +52,11 @@ const OrderDetail = () => {
         `${import.meta.env.VITE_APP_API}orders/${id}/orderDetails`,
       );
 
-      if (getOrderDetailsRes.data && getOrderByIdRes.data) {
-        setOrderInfo(getOrderByIdRes.data);
+      if (getOrderDetailsRes.data.success && getOrderByIdRes.data.success) {
+        setOrderInfo(getOrderByIdRes.data.data);
 
         setOrderDetailsData(
-          getOrderDetailsRes.data.map((i) => {
+          getOrderDetailsRes.data.data.map((i) => {
             return {
               key: i.id,
               id: i.id,
