@@ -13,7 +13,7 @@ const ManageFood = () => {
   const handleDeleteFood = async (id) => {
     const res = await axios({
       method: "delete",
-      url: `https://localhost:44328/api/foods/${id}`,
+      url: `${import.meta.env.VITE_APP_API}foods/${id}`,
     });
 
     if (res.data) {
@@ -83,12 +83,12 @@ const ManageFood = () => {
   //
   useEffect(() => {
     const getFoodList = async () => {
-      const res = await axios.get("https://localhost:44328/api/foods");
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods`);
 
       const foodList = res.data?.map((i) => {
         return {
           key: i.id,
-          image: `https://localhost:44328/Images/${i.image}`,
+          image: `${import.meta.env.VITE_APP_IMAGE}${i.image}`,
           name: i.name,
           price: i.price,
           status: i.status ? "Còn hàng" : "Hết hàng",

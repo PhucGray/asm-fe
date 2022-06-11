@@ -8,13 +8,17 @@ const { Option } = Select;
 const AddOrEditUser = ({ page = "add" }) => {
   const [form] = Form.useForm();
   const [userId, setUserId] = useState(null);
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isAdminUp, setIsAdminUp] = useState(false);
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const onFinish = async (data) => {
+    setLoading(true);
+
     if (page === "add") {
       const res = await axios({
         method: "post",
-        url: "https://localhost:44328/api/users",
+        url: `${import.meta.env.VITE_APP_API}users`,
         data: data,
       });
 
@@ -22,20 +26,34 @@ const AddOrEditUser = ({ page = "add" }) => {
         message.success("Thêm người dùng thành công");
         form.resetFields();
       }
+
+      setLoading(false);
     }
 
     if (page === "edit") {
       const res = await axios({
         method: "put",
-        url: `https://localhost:44328/api/users/${userId}`,
+        url: `${import.meta.env.VITE_APP_API}users/${userId}`,
         data: data,
       });
 
       if (res.data) {
         message.success("Sửa người dùng thành công");
       }
+
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getUserRoles = async () => {
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}users/roles`);
+
+      setRoles(res.data.filter((role) => role.id !== 1));
+    };
+
+    getUserRoles();
+  }, []);
 
   // EDIT
 
@@ -43,7 +61,7 @@ const AddOrEditUser = ({ page = "add" }) => {
 
   useEffect(() => {
     const getUserById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}users/${id}`);
 
       const {
         id: userId,
@@ -52,7 +70,7 @@ const AddOrEditUser = ({ page = "add" }) => {
         email,
         address,
         phone,
-        role,
+        roleId,
         isDeleted,
         password,
       } = res.data;
@@ -65,12 +83,12 @@ const AddOrEditUser = ({ page = "add" }) => {
         email,
         address,
         phone,
-        role,
+        roleId,
         isDeleted,
         password,
       });
 
-      setIsSuperAdmin(role === 2);
+      setIsAdminUp([3, 4].includes(roleId));
     };
 
     if (params.id) {
@@ -89,7 +107,7 @@ const AddOrEditUser = ({ page = "add" }) => {
         layout="vertical"
         initialValues={{
           status: true,
-          role: 0,
+          roleId: 2,
           isDeleted: false,
         }}
         form={form}>
@@ -136,7 +154,7 @@ const AddOrEditUser = ({ page = "add" }) => {
             </Form.Item>
           </Col>
 
-          {(!page === "edit" || !isSuperAdmin) && (
+          {page === "add" && (
             <Col flex="none">
               <Form.Item
                 label="Mật khẩu"
@@ -194,11 +212,14 @@ const AddOrEditUser = ({ page = "add" }) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item name="role" label="Quyền">
+        <Form.Item name="roleId" label="Quyền">
           <Radio.Group>
-            <Radio value={0}>Nhân viên</Radio>
-            <Radio value={1}>Admin</Radio>
-            <Radio value={2}>Super admin</Radio>
+            {roles &&
+              roles.map((role) => (
+                <Radio key={role.id} value={role.id}>
+                  {role.title}
+                </Radio>
+              ))}
           </Radio.Group>
         </Form.Item>
 
@@ -211,6 +232,7 @@ const AddOrEditUser = ({ page = "add" }) => {
 
         <Form.Item>
           <Button
+            loading={loading}
             className="d-block w-50 mx-auto rounded"
             style={{ height: 40 }}
             type="primary"

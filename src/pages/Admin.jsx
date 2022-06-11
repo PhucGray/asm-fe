@@ -3,7 +3,7 @@ import "../styles/bootstrap.scss";
 import React from "react";
 import { Button, Menu, message, Popconfirm } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
 import { logout, selectUser } from "../features/user/userSlice";
@@ -11,7 +11,6 @@ import { logout, selectUser } from "../features/user/userSlice";
 const Admin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const user = useSelector(selectUser);
 
   const menuItems = [
@@ -74,7 +73,6 @@ const Admin = () => {
         <div className="main">
           <div className="sidebar">
             <Menu
-              // defaultSelectedKeys={["food"]}
               mode="inline"
               inlineCollapsed={false}
               items={menuItems}

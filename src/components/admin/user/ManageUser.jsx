@@ -44,9 +44,9 @@ const ManageUser = () => {
       key: "role",
       render: (value) => (
         <>
-          {value === 1 && "Nhân viên"}
-          {value === 2 && "Admin"}
-          {value === 3 && "Super Admin"}
+          {value === 2 && "Nhân viên"}
+          {value === 3 && "Admin"}
+          {value === 4 && "Super Admin"}
         </>
       ),
     },
@@ -57,7 +57,8 @@ const ManageUser = () => {
         <Space size="middle">
           <a onClick={() => navigate(`${record.id}`)}>Chi tiết</a>
 
-          {record.role !== 3 && (
+          {/* Khác superadmin */}
+          {record.role !== 4 && (
             <>
               <a onClick={() => navigate(`edit/${record.id}`)}>Sửa</a>
 
@@ -79,25 +80,19 @@ const ManageUser = () => {
   //
   useEffect(() => {
     const getUserList = async () => {
-      const res = await axios.get("https://localhost:44328/api/users");
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}users`);
 
-      const userList = res.data
-        ?.filter((_user) => _user.id !== user?.id)
-        .map((i) => {
-          let role = "Nhân viên";
-          if (i.role === 1) role = "Admin";
-          if (i.role === 2) role = "Super Admin";
-
-          return {
-            key: i.id,
-            id: i.id,
-            email: i.email,
-            fullName: i.fullName,
-            gender: i.gender ? "Nam" : "Nữ",
-            phone: i.phone,
-            role: i.role,
-          };
-        });
+      const userList = res.data.map((i) => {
+        return {
+          key: i.id,
+          id: i.id,
+          email: i.email,
+          fullName: i.fullName,
+          gender: i.gender ? "Nam" : "Nữ",
+          phone: i.phone,
+          role: i.roleId,
+        };
+      });
 
       setUserData(userList);
       setTableLoading(false);

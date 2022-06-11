@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../features/user/userSlice";
 
@@ -14,15 +14,17 @@ const UserDetail = () => {
 
   useEffect(() => {
     const getUserById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
-      setUserData(res.data);
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}users/${id}`);
+
+      if (res.data) {
+        setUserData(res.data);
+      } else {
+        message.error("Không tồn tại người dùng này.");
+        navigate("/admin/user");
+      }
     };
 
-    if (params.id && user) {
-      if (params.id == user.id) {
-        return navigate("/admin/user");
-      }
-
+    if (params.id) {
       getUserById(params?.id);
     }
   }, [user]);

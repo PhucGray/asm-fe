@@ -14,7 +14,6 @@ import AddOrEditUser from "./components/admin/user/AddOrEditUser";
 import ManageUser from "./components/admin/user/ManageUser";
 import UserDetail from "./components/admin/user/UserDetail";
 import Cart from "./components/customer/Cart";
-import CheckoutInfo from "./components/customer/CheckoutInfo";
 import FoodInfo from "./components/customer/FoodInfo";
 import FoodList from "./components/customer/FoodList";
 import OrderDetailHistory from "./components/customer/OrderDetailHistory";
@@ -33,7 +32,7 @@ const App = () => {
     const getProfile = async (token) => {
       try {
         const res = await axios.get(
-          "https://localhost:44328/api/auth/profile",
+          `${import.meta.env.VITE_APP_API}auth/profile`,
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -66,7 +65,6 @@ const App = () => {
         <Route path="history" element={<OrderHistory />} />
         <Route path="history/:id" element={<OrderDetailHistory />} />
         <Route path="cart" element={<Cart />} />
-        <Route path="checkout-info" element={<CheckoutInfo />} />
         <Route path=":id" element={<FoodInfo />} />
       </Route>
 
@@ -100,7 +98,7 @@ const App = () => {
         path="register"
         element={
           user ? (
-            <Navigate to={user.role === 0 ? "/" : "/admin"} />
+            <Navigate to={user.roleId === 1 ? "/" : "/admin"} />
           ) : (
             <Register />
           )
@@ -109,7 +107,11 @@ const App = () => {
       <Route
         path="login"
         element={
-          user ? <Navigate to={user.role === 0 ? "/" : "/admin"} /> : <Login />
+          user ? (
+            <Navigate to={user.roleId === 1 ? "/" : "/admin"} />
+          ) : (
+            <Login />
+          )
         }
       />
     </Routes>

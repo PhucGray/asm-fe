@@ -8,6 +8,9 @@ import {
   message,
   Popconfirm,
 } from "antd";
+import { useForm } from "antd/lib/form/Form";
+// import TextArea from "antd/lib/input/TextArea";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,23 +19,47 @@ import {
   removeItem,
   selectCart,
 } from "../../features/cart/cartSlice";
+import { selectUser } from "../../features/user/userSlice";
+import { formatMoneyVND } from "../../utils/formatMoney";
+
+const { TextArea } = Input;
 
 const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const [isModalCheckoutOpen, setIsModalCheckoutOpen] = useState(false);
+  const [form] = useForm();
 
   //
   const cart = useSelector(selectCart);
   const [cartData, setCartData] = useState([]);
   const [tempPrice, setTempPrice] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
+  const [vat, setVat] = useState(0);
 
   useEffect(() => {
-    // dispatch(clearCart());
+    const getVAT = async () => {
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}orders/vat`);
+      setVat(res.data);
+    };
+
+    getVAT();
   }, []);
 
   useEffect(() => {
-    if (cart) {
+    if (user && cart) {
+      form.setFieldsValue({
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+      });
+    }
+  }, [user, cart]);
+
+  useEffect(() => {
+    if (cart && vat !== 0) {
       setCartData(
         cart.map((i) => {
           return {
@@ -52,8 +79,9 @@ const Cart = () => {
       });
 
       setTempPrice(tempPrice);
+      setFinalPrice((tempPrice * (100 - vat)) / 100);
     }
-  }, [cart]);
+  }, [cart, vat]);
 
   const columns = [
     {
@@ -96,15 +124,49 @@ const Cart = () => {
     },
   ];
 
-  const handleCheckout = async () => {
-    // alert("thanh toan");
-    navigate("/checkout-info");
-  };
-
   const onFinish = async (values) => {
-    console.log(values);
-    message.success({ content: "Đặt hàng thành công" });
-    setIsModalCheckoutOpen(false);
+    try {
+      const { address, note } = values;
+
+      const addOrderRes = await axios({
+        method: "post",
+        url: `${import.meta.env.VITE_APP_API}orders/order`,
+        data: {
+          price: finalPrice,
+          vat,
+          address,
+          note,
+          userId: user.id,
+        },
+      });
+
+      const orderId = addOrderRes.data.id;
+
+      const addOrderDetailsRes = await axios({
+        method: "post",
+        url: `${import.meta.env.VITE_APP_API}orders/orderDetails`,
+        data: cart.map((i) => {
+          return {
+            foodName: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            totalPrice: i.quantity * i.price,
+            foodId: i.id,
+            orderId,
+          };
+        }),
+      });
+
+      console.log(addOrderDetailsRes.data);
+
+      message.success({ content: "Đặt hàng thành công" });
+      setIsModalCheckoutOpen(false);
+      dispatch(clearCart());
+      form.setFieldsValue(null);
+    } catch (error) {
+      setIsModalCheckoutOpen(false);
+      message.error(error);
+    }
   };
 
   const handleCancel = () => {
@@ -133,17 +195,17 @@ const Cart = () => {
 
               <div className="d-flex justify-content-between align-items-center">
                 <div>Tạm tính</div>
-                <div>{tempPrice} VNĐ</div>
+                <div>{formatMoneyVND(tempPrice)}</div>
               </div>
 
               <div className="d-flex justify-content-between align-items-center">
                 <div>VAT</div>
-                <div>10 (%)</div>
+                <div>{vat} (%)</div>
               </div>
 
               <div className="d-flex justify-content-between align-items-center">
                 <div>Tổng</div>
-                <div>{tempPrice * 0.9} VNĐ</div>
+                <div>{formatMoneyVND(finalPrice)}</div>
               </div>
 
               <Button
@@ -170,13 +232,19 @@ const Cart = () => {
         visible={isModalCheckoutOpen}
         footer={null}
         onCancel={handleCancel}>
+        <div className="text-center">
+          Tổng tiền:{" "}
+          <span className="fw-bold">{formatMoneyVND(finalPrice)}</span>
+        </div>
+
         <Form
+          form={form}
           name="checkout"
           initialValues={{}}
           onFinish={onFinish}
           autoComplete="off"
           layout="vertical"
-          style={{ maxWidth: 450, marginInline: "auto" }}>
+          style={{ maxWidth: 450, marginInline: "auto", marginTop: 20 }}>
           <Form.Item
             label="Họ và tên"
             name="fullName"
@@ -186,7 +254,7 @@ const Cart = () => {
                 message: "Vui lòng nhập họ và tên",
               },
             ]}>
-            <Input autoFocus />
+            <Input autoFocus disabled />
           </Form.Item>
 
           <Form.Item
@@ -202,7 +270,7 @@ const Cart = () => {
                 message: "Sai định dạng email",
               },
             ]}>
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
@@ -214,7 +282,7 @@ const Cart = () => {
                 message: "Vui lòng nhập số điện thoại",
               },
             ]}>
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
@@ -227,6 +295,10 @@ const Cart = () => {
               },
             ]}>
             <Input />
+          </Form.Item>
+
+          <Form.Item label="Ghi chú" name="note" rules={[]}>
+            <TextArea />
           </Form.Item>
 
           <Form.Item>

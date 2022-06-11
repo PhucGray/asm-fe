@@ -1,10 +1,7 @@
-import { Button, Space, Table, Tag } from "antd";
+import { Table } from "antd";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 const OrderDetailHistory = () => {
-  const navigate = useNavigate();
-
   const columns = [
     {
       title: "Tên món",

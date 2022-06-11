@@ -27,7 +27,7 @@ const Register = () => {
 
     const res = await axios({
       method: "post",
-      url: "https://localhost:44328/api/auth/register",
+      url: `${import.meta.env.VITE_APP_API}auth/register`,
       data: data,
     });
 

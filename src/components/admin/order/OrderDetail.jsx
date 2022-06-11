@@ -1,11 +1,23 @@
-import { Button, Space, Table, Tag } from "antd";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Spin, Table } from "antd";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { formatCsharpDate } from "../../../utils/formatDate";
+import { formatMoneyVND } from "../../../utils/formatMoney";
 
 const OrderDetail = () => {
+  const params = useParams();
   const navigate = useNavigate();
+  const [orderInfo, setOrderInfo] = useState(null);
+  const [orderDetailsData, setOrderDetailsData] = useState([]);
 
   const columns = [
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "Tên món",
       dataIndex: "name",
@@ -15,6 +27,7 @@ const OrderDetail = () => {
       title: "Giá",
       dataIndex: "price",
       key: "price",
+      render: (value) => <>{formatMoneyVND(value)}</>,
     },
     {
       title: "Số lượng",
@@ -22,46 +35,82 @@ const OrderDetail = () => {
       key: "quantity",
     },
     {
-      title: "VAT",
-      dataIndex: "vat",
-      key: "vat",
-      render: (text) => <span>{text}%</span>,
-    },
-    {
       title: "Thành tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (value) => <>{formatMoneyVND(value)}</>,
     },
-    
   ];
 
-  const data = [
-    {
-      key: "1",
-      name: "Cháo gà",
-      price: 50000,
-      quantity: 2,
-      vat: 10,
-      totalPrice: 100000,
-    },
-  ];
+  useEffect(() => {
+    const getOrderDetailsById = async (id) => {
+      const getOrderByIdRes = await axios.get(
+        `${import.meta.env.VITE_APP_API}orders/${id}`,
+      );
+
+      const getOrderDetailsRes = await axios.get(
+        `${import.meta.env.VITE_APP_API}orders/${id}/orderDetails`,
+      );
+
+      if (getOrderDetailsRes.data && getOrderByIdRes.data) {
+        setOrderInfo(getOrderByIdRes.data);
+
+        setOrderDetailsData(
+          getOrderDetailsRes.data.map((i) => {
+            return {
+              key: i.id,
+              id: i.id,
+              name: i.foodName,
+              price: i.price,
+              quantity: i.quantity,
+              totalPrice: i.totalPrice,
+            };
+          }),
+        );
+      }
+    };
+
+    if (params.id) {
+      getOrderDetailsById(params?.id);
+    }
+  }, []);
 
   return (
     <div>
+      <Button
+        className="mt-3 ms-5 d-flex align-items-center"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate("/admin/order")}>
+        Quay lại
+      </Button>
+
       <div className="title">Thông tin đơn hàng</div>
-      <div>
-        Ngày đặt: <span>12/09/2022</span>
-      </div>
 
-      <div>
-        Trạng thái: <span>Hoàn thành</span>
-      </div>
+      {orderInfo && orderDetailsData.length > 0 ? (
+        <>
+          <div>
+            Ngày đặt: <span>{formatCsharpDate(orderInfo.createdAt)}</span>
+          </div>
 
-      <div>
-        Tổng tiền: <span>500,000</span>
-      </div>
+          <div>
+            Trạng thái: <span>Hoàn thành</span>
+          </div>
 
-      <Table className="mt-3" columns={columns} dataSource={data} />
+          <div>
+            Tổng tiền: <span>{formatMoneyVND(orderInfo.price)}</span>
+          </div>
+
+          <Table
+            className="mt-3"
+            columns={columns}
+            dataSource={orderDetailsData}
+          />
+        </>
+      ) : (
+        <div className="mt-5 text-center">
+          <Spin />
+        </div>
+      )}
     </div>
   );
 };

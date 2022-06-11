@@ -8,7 +8,7 @@ const FoodDetail = () => {
 
   useEffect(() => {
     const getFoodById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
 
       console.log(res);
       setFood(res.data);

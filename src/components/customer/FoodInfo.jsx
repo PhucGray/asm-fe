@@ -14,9 +14,8 @@ const FoodInfo = () => {
   const [food, setFood] = useState(null);
 
   useEffect(() => {
-    // dispatch(clearCart());
     const getFoodById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
 
       console.log(res.data);
       setFood(res.data);

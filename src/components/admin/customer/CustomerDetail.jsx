@@ -1,8 +1,8 @@
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CustomerDetail = () => {
   const params = useParams();
@@ -11,8 +11,7 @@ const CustomerDetail = () => {
 
   useEffect(() => {
     const getCustomerById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/users/${id}`);
-
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}users/${id}`);
       setCustomer(res.data);
     };
 

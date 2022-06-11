@@ -20,8 +20,11 @@ const { TextArea } = Input;
 const AddOrEditFood = ({ page = "add" }) => {
   const [form] = Form.useForm();
   const [foodId, setfoodId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const onFinish = async (data) => {
+    setLoading(true);
+
     try {
       const formData = new FormData();
 
@@ -41,7 +44,7 @@ const AddOrEditFood = ({ page = "add" }) => {
       if (page === "add") {
         const res = await axios({
           method: "post",
-          url: "https://localhost:44328/api/foods",
+          url: `${import.meta.env.VITE_APP_API}foods`,
           data: formData,
 
           headers: {
@@ -59,7 +62,7 @@ const AddOrEditFood = ({ page = "add" }) => {
       if (page === "edit") {
         const res = await axios({
           method: "put",
-          url: `https://localhost:44328/api/foods/${foodId}`,
+          url: `${import.meta.env.VITE_APP_API}foods/${foodId}`,
           data: formData,
           headers: {
             "Content-Type": "multipart/form-data",
@@ -72,6 +75,8 @@ const AddOrEditFood = ({ page = "add" }) => {
       }
     } catch (error) {
       console.log("onFinishError: " + error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,7 +102,7 @@ const AddOrEditFood = ({ page = "add" }) => {
 
   useEffect(() => {
     const getFoodById = async (id) => {
-      const res = await axios.get(`https://localhost:44328/api/foods/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods/${id}`);
 
       const {
         id: foodId,
@@ -122,7 +127,7 @@ const AddOrEditFood = ({ page = "add" }) => {
         Image: image,
       });
 
-      setFileList([{ url: `https://localhost:44328/Images/${image}` }]);
+      setFileList([{ url: `${import.meta.env.VITE_APP_IMAGE}${image}` }]);
     };
 
     if (params.id) {
@@ -236,6 +241,7 @@ const AddOrEditFood = ({ page = "add" }) => {
 
         <Form.Item>
           <Button
+            loading={loading}
             className="d-block w-50 mx-auto rounded"
             style={{ height: 40 }}
             type="primary"

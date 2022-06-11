@@ -18,20 +18,18 @@ const Login = () => {
 
     const res = await axios({
       method: "post",
-      url: "https://localhost:44328/api/auth/login",
+      url: `${import.meta.env.VITE_APP_API}auth/login`,
       data: data,
     });
 
     if (res.data.success) {
-      const { token, role } = res.data.data;
-
-      console.log(role);
+      const { token, roleId } = res.data.data;
 
       dispatch(setUser(res.data.data));
       message.success("Đăng nhập thành công");
       localStorage.setItem("token", token);
 
-      if (role === 0) {
+      if (roleId === 1) {
         navigate("/");
       } else {
         navigate("admin");

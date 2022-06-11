@@ -50,7 +50,7 @@ const ManageCustomer = () => {
   useEffect(() => {
     const getCustomerList = async () => {
       const res = await axios.get(
-        "https://localhost:44328/api/users/getByRoles?roles=0",
+        `${import.meta.env.VITE_APP_API}users/customers`,
       );
 
       const customerList = res.data?.map((i) => {

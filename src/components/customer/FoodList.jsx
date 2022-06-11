@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ const FoodList = () => {
 
   useEffect(() => {
     const getFoodList = async () => {
-      const res = await axios.get("https://localhost:44328/api/foods");
+      const res = await axios.get(`${import.meta.env.VITE_APP_API}foods`);
       setFoodList(res.data.filter((i) => i.isDeleted === false));
     };
 
@@ -30,7 +30,7 @@ const FoodList = () => {
             key={food.id}
             className="food-item"
             onClick={() => navigate(`${food.id}`)}>
-            <img src={`https://localhost:44328/images/${food.image}`} />
+            <img src={`${import.meta.env.VITE_APP_IMAGE + food.image}`} />
 
             <div style={{ fontSize: 20, fontWeight: "bold" }}>{food.name}</div>
 
@@ -45,6 +45,7 @@ const FoodList = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 dispatch(addFoodToCart(food));
+                message.success("Đã thêm sản phẩm vào giỏ hàng");
               }}
               className="w-100"
               style={{ height: 45 }}
