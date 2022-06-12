@@ -78,7 +78,8 @@ const UpdatePassword = () => {
         }}
         autoComplete="off"
         layout="vertical"
-        style={{ maxWidth: 450, marginInline: "auto" }}>
+        style={{ maxWidth: 450, marginInline: "auto" }}
+        >
         <Form.Item
           label="Mật khẩu hiện tại"
           name="oldPassword"

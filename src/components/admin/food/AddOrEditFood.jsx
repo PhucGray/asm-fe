@@ -56,6 +56,13 @@ const AddOrEditFood = ({ page = "add" }) => {
           form.resetFields();
           setFileList([]);
           message.success("Thêm món thành công");
+        } else {
+          form.setFields([
+            {
+              name: "Name",
+              errors: [res.data.message],
+            },
+          ]);
         }
       }
 
@@ -71,6 +78,13 @@ const AddOrEditFood = ({ page = "add" }) => {
 
         if (res.data.success) {
           message.success("Sửa món thành công");
+        } else {
+          form.setFields([
+            {
+              name: "Name",
+              errors: [res.data.message],
+            },
+          ]);
         }
       }
     } catch (error) {

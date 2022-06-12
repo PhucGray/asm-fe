@@ -64,14 +64,20 @@ const Customer = () => {
             />
           </Badge>
 
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Button
-              className="rounded"
-              type="primary"
-              onClick={(e) => e.preventDefault()}>
-              {user?.fullName}
+          {user ? (
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <Button
+                className="rounded"
+                type="primary"
+                onClick={(e) => e.preventDefault()}>
+                {user.fullName}
+              </Button>
+            </Dropdown>
+          ) : (
+            <Button type="primary" onClick={() => navigate("/login")}>
+              Đăng nhập
             </Button>
-          </Dropdown>
+          )}
         </div>
       </div>
 
