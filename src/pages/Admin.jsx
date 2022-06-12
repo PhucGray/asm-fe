@@ -7,6 +7,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
 import { logout, selectUser } from "../features/user/userSlice";
+import MenuItem from "antd/lib/menu/MenuItem";
 
 const Admin = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,10 @@ const Admin = () => {
     {
       label: "Hoá đơn",
       key: "order",
+    },
+    {
+      label: "Đổi mật khẩu",
+      key: "update-password",
     },
   ];
 
@@ -83,7 +88,11 @@ const Admin = () => {
               items={menuItems}
               style={{ border: "none" }}
               onClick={({ key }) => {
-                navigate(key);
+                if (key === "update-password") {
+                  navigate(`/${key}`);
+                } else {
+                  navigate(key);
+                }
               }}
             />
           </div>

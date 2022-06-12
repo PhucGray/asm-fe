@@ -94,7 +94,7 @@ const Register = () => {
 
           <Col flex="none">
             <Form.Item
-              label="Password"
+              label="Mật khẩu"
               name="password"
               rules={[
                 {

@@ -1,14 +1,14 @@
 import "../styles/bootstrap.scss";
 //
+import { HistoryOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { Badge, Button, Dropdown, Menu, message } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
-import { Button, Badge, Popconfirm, Avatar, message } from "antd";
-import { ShoppingCartOutlined, HistoryOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import { selectCart } from "../features/cart/cartSlice";
-import { logout, selectUser, setUser } from "../features/user/userSlice";
+import { logout, selectUser } from "../features/user/userSlice";
 
 const Customer = () => {
   const cart = useSelector(selectCart);
@@ -16,14 +16,28 @@ const Customer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const confirm = () => {
+  const _logout = () => {
     dispatch(logout());
     message.success("Đăng xuất thành công");
     navigate("/login");
   };
 
-  const cancel = (e) => {};
-
+  const menu = (
+    <Menu
+      items={[
+        {
+          label: (
+            <div onClick={() => navigate("/update-password")}>Đổi mật khẩu</div>
+          ),
+          key: "0",
+        },
+        {
+          label: <div onClick={_logout}>Đăng xuất</div>,
+          key: "1",
+        },
+      ]}
+    />
+  );
   return (
     <div className="customer__page">
       <div className="navbar">
@@ -50,23 +64,14 @@ const Customer = () => {
             />
           </Badge>
 
-          {user ? (
-            <Popconfirm
-              title="Bạn có chắc chắn muốn đăng xuất ?"
-              onConfirm={confirm}
-              onCancel={cancel}
-              okText="Có"
-              cancelText="Huỷ">
-              <Button>{user?.fullName}</Button>
-            </Popconfirm>
-          ) : (
+          <Dropdown overlay={menu} trigger={["click"]}>
             <Button
-              className="ms-3 rounded"
+              className="rounded"
               type="primary"
-              onClick={() => navigate("/login")}>
-              Đăng nhập
+              onClick={(e) => e.preventDefault()}>
+              {user?.fullName}
             </Button>
-          )}
+          </Dropdown>
         </div>
       </div>
 

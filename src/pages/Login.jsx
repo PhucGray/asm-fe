@@ -79,7 +79,7 @@ const Login = () => {
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="Mật khẩu"
           name="password"
           rules={[
             {
@@ -93,10 +93,6 @@ const Login = () => {
             },
           ]}>
           <Input.Password />
-        </Form.Item>
-
-        <Form.Item name="isEmployee" valuePropName="checked">
-          <Checkbox>Bạn là nhân viên ?</Checkbox>
         </Form.Item>
 
         <Form.Item>

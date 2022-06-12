@@ -19,11 +19,12 @@ import FoodInfo from "./components/customer/FoodInfo";
 import FoodList from "./components/customer/FoodList";
 import OrderDetailHistory from "./components/customer/OrderDetailHistory";
 import OrderHistory from "./components/customer/OrderHistory";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { logout, selectUser, setUser } from "./features/user/userSlice";
 import Admin from "./pages/Admin";
 import Customer from "./pages/Customer";
+import UpdatePassword from "./pages/UpdatePassword";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -114,6 +115,17 @@ const App = () => {
             <Navigate to={user.roleId === 1 ? "/" : "/admin"} />
           ) : (
             <Login />
+          )
+        }
+      />
+
+      <Route
+        path="update-password"
+        element={
+          !user && !localStorage.getItem("token") ? (
+            <Navigate to="/login" />
+          ) : (
+            <UpdatePassword />
           )
         }
       />
