@@ -1,9 +1,12 @@
+import { Button } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const FoodDetail = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const [food, setFood] = useState(null);
 
   useEffect(() => {
@@ -22,6 +25,13 @@ const FoodDetail = () => {
 
   return (
     <div>
+      <Button
+        className="mt-3 ms-5 d-flex align-items-center"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate("/admin/food")}>
+        Quay lại
+      </Button>
+
       <div className="title">Chi tiết món ăn</div>
 
       {food && (

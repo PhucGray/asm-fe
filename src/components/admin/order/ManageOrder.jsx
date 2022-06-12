@@ -30,6 +30,18 @@ const ManageOrder = () => {
       render: (value) => <>{formatMoneyVND(value)}</>,
     },
     {
+      title: "Người đặt",
+      dataIndex: "user",
+      key: "user",
+      render: (user) => (
+        <div
+          className="btn btn-link"
+          onClick={() => navigate(`/admin/user/${user.id}`)}>
+          {user.fullName}
+        </div>
+      ),
+    },
+    {
       title: "Ngày đặt",
       dataIndex: "orderDate",
       key: "orderDate",
@@ -97,6 +109,7 @@ const ManageOrder = () => {
             return {
               key: i.id,
               id: i.id,
+              user: i.user,
               price: i.price,
               orderDate: formatedDate,
               status: i.orderStatusId,

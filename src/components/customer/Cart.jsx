@@ -63,11 +63,13 @@ const Cart = () => {
 
   useEffect(() => {
     if (cart && vat !== 0) {
+      console.log(cart);
       setCartData(
         cart.map((i) => {
           return {
             key: i.id,
             name: i.name,
+            image: `${import.meta.env.VITE_APP_IMAGE + i.image}`,
             price: i.price,
             quantity: i.quantity,
             totalPrice: i.price * i.quantity,
@@ -91,6 +93,12 @@ const Cart = () => {
       title: "Tên món",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Hình ảnh",
+      dataIndex: "image",
+      key: "image",
+      render: (value) => <img src={value} width={60} />,
     },
     {
       title: "Giá",

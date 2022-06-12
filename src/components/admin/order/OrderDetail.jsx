@@ -78,7 +78,7 @@ const OrderDetail = () => {
   return (
     <div>
       <Button
-        className="mt-3 ms-5 d-flex align-items-center"
+        className="mt-3 d-flex align-items-center"
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate("/admin/order")}>
         Quay lại

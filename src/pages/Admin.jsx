@@ -1,9 +1,9 @@
 import "../styles/bootstrap.scss";
 //
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Menu, message, Popconfirm } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 // img
 import LogoImg from "../assets/images/logo.png";
 import { logout, selectUser } from "../features/user/userSlice";
@@ -11,7 +11,10 @@ import { logout, selectUser } from "../features/user/userSlice";
 const Admin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector(selectUser);
+
+  const [currentMenuItem, setCurrentMenuItem] = useState(null);
 
   const menuItems = [
     {
@@ -39,12 +42,14 @@ const Admin = () => {
     navigate("/login");
   };
 
-  const cancel = (e) => {};
-
-  if (localStorage.getItem("token") && user && user.role === 0)
-    return <Navigate to="/" />;
+  if (user && user.roleId === 1) return <Navigate to="/" />;
 
   if (!localStorage.getItem("token")) return <Navigate to="/login" />;
+
+  useEffect(() => {
+    const item = menuItems.find((item) => location.pathname.includes(item.key));
+    setCurrentMenuItem(item);
+  }, [location.pathname]);
 
   return (
     <>
@@ -62,7 +67,6 @@ const Admin = () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn đăng xuất ?"
               onConfirm={confirm}
-              onCancel={cancel}
               okText="Có"
               cancelText="Huỷ">
               <Button>Đăng xuất</Button>
@@ -73,6 +77,7 @@ const Admin = () => {
         <div className="main">
           <div className="sidebar">
             <Menu
+              selectedKeys={[currentMenuItem?.key]}
               mode="inline"
               inlineCollapsed={false}
               items={menuItems}
