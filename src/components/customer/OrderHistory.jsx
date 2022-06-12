@@ -110,7 +110,7 @@ const ManageOrder = () => {
   }, [user]);
 
   return (
-    <div className="px-5 mt-3">
+    <div className="px-5 mt-3 bg-white mx-5 rounded pt-3">
       <div className="title">Lịch sử mua hàng</div>
       <Table
         loading={tableLoading}

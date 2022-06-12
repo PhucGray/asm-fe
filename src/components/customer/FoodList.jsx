@@ -42,9 +42,25 @@ const FoodList = () => {
 
               <div style={{ color: "#757575" }}>{food.description}</div>
 
-              <div className="fw-bold text-danger" style={{ fontSize: 25 }}>
-                {formatMoneyVND(food.price)}
-              </div>
+              {food?.specialPrice ? (
+                <>
+                  <div
+                    className="fw-bold text-danger"
+                    style={{ fontSize: 25, lineHeight: "normal" }}>
+                    {formatMoneyVND(food.specialPrice)}
+                  </div>
+
+                  <div className="text-decoration-line-through fst-italic">
+                    {formatMoneyVND(food.price)}
+                  </div>
+                </>
+              ) : (
+                <div
+                  className="fw-bold text-danger"
+                  style={{ fontSize: 25, lineHeight: "normal" }}>
+                  {formatMoneyVND(food.price)}
+                </div>
+              )}
 
               <Button
                 disabled={!food.status}
@@ -53,7 +69,7 @@ const FoodList = () => {
                   dispatch(addFoodToCart(food));
                   message.success("Đã thêm sản phẩm vào giỏ hàng");
                 }}
-                className="w-100"
+                className="w-100 mt-auto"
                 style={{ height: 45 }}
                 type="primary">
                 {food.status ? "Thêm vào giỏ hàng" : "Hết hàng"}

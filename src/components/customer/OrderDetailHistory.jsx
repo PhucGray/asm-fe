@@ -76,7 +76,7 @@ const OrderDetail = () => {
   }, []);
 
   return (
-    <div className="px-5 mt-3">
+    <div className="px-5 mt-3 bg-white mx-5 rounded">
       <Button
         className="mt-3 d-flex align-items-center"
         icon={<ArrowLeftOutlined />}

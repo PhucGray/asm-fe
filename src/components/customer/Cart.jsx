@@ -7,15 +7,17 @@ import {
   Input,
   message,
   Popconfirm,
+  InputNumber,
 } from "antd";
 import { useForm } from "antd/lib/form/Form";
-// import TextArea from "antd/lib/input/TextArea";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   clearCart,
+  descreaseQuantity,
+  increaseQuantity,
   removeItem,
   selectCart,
 } from "../../features/cart/cartSlice";
@@ -63,14 +65,14 @@ const Cart = () => {
 
   useEffect(() => {
     if (cart && vat !== 0) {
-      console.log(cart);
       setCartData(
         cart.map((i) => {
           return {
             key: i.id,
+            id: i.id,
             name: i.name,
             image: `${import.meta.env.VITE_APP_IMAGE + i.image}`,
-            price: i.price,
+            price: i?.specialPrice || i.price,
             quantity: i.quantity,
             totalPrice: i.price * i.quantity,
           };
@@ -80,7 +82,11 @@ const Cart = () => {
       let tempPrice = 0;
 
       cart.map((i) => {
-        tempPrice += i.price * i.quantity;
+        if (i?.specialPrice) {
+          tempPrice += i.specialPrice * i.quantity;
+        } else {
+          tempPrice += i.price * i.quantity;
+        }
       });
 
       setTempPrice(tempPrice);
@@ -89,6 +95,11 @@ const Cart = () => {
   }, [cart, vat]);
 
   const columns = [
+    {
+      title: "Mã",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "Tên món",
       dataIndex: "name",
@@ -122,9 +133,36 @@ const Cart = () => {
         <Space size="middle">
           <a onClick={() => navigate(`/${record.key}`)}>Chi tiết</a>
 
+          <div className="d-flex">
+            <Button
+              style={{ height: 40, width: 40 }}
+              onClick={() => {
+                if (record.quantity === 1)
+                  return dispatch(removeItem(record.key));
+
+                dispatch(descreaseQuantity(record.id));
+              }}>
+              -
+            </Button>
+            <InputNumber
+              style={{ height: 40, width: 40 }}
+              size="large"
+              min={1}
+              value={record.quantity}
+              disabled
+            />
+            <Button
+              style={{ height: 40, width: 40 }}
+              onClick={() => {
+                dispatch(increaseQuantity(record.id));
+              }}>
+              +
+            </Button>
+          </div>
+
           <Popconfirm
             title="Bạn có chắc chắn muốn xoá món ăn này"
-            onConfirm={() => dispatch(removeItem({ id: record.key }))}
+            onConfirm={() => dispatch(removeItem(record.key))}
             onCancel={null}
             okText="Có"
             cancelText="Không">
@@ -160,7 +198,7 @@ const Cart = () => {
           data: cart.map((i) => {
             return {
               foodName: i.name,
-              price: i.price,
+              price: i?.specialPrice || i.price,
               quantity: i.quantity,
               totalPrice: i.quantity * i.price,
               foodId: i.id,
@@ -229,7 +267,14 @@ const Cart = () => {
                 Tiếp tục mua hàng
               </Button>
               <Button
-                onClick={() => setIsModalCheckoutOpen(true)}
+                onClick={() => {
+                  if (!localStorage.getItem("token") || !user) {
+                    message.error("Bạn cần đăng nhập để thanh toán");
+                    navigate("/login", { replace: true });
+                  } else {
+                    setIsModalCheckoutOpen(true);
+                  }
+                }}
                 className="rounded"
                 style={{ height: 45 }}
                 type="ghost">
