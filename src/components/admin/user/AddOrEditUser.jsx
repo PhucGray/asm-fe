@@ -116,7 +116,7 @@ const AddOrEditUser = ({ page = "add" }) => {
       <div className="title">{page === "edit" ? "Sửa" : "Thêm"} người dùng</div>
 
       <>
-        {page === "edit" && userId ? (
+        {(page === "edit" && userId) || page === "add" ? (
           <Form
             style={{ maxWidth: 450, marginInline: "auto" }}
             onFinish={onFinish}
